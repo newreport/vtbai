@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# User
+temp.txt
+model.onnx
+temp1.wav
+temp2.wav
+config.json
+
 # C extensions
 *.so
 

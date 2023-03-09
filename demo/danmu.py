@@ -1,11 +1,6 @@
-import openai
 from bilibili_api import live, sync
-import configparser
-from queue import Queue, PriorityQueue
 import json
-import time
 import requests
-import _thread
 
 
 env = 'pro'  # dev|pro
@@ -14,7 +9,6 @@ roomID = '207640'
 # 获取房间真实 id
 room = live.LiveDanmaku(json.loads(str(requests.get('https://api.live.bilibili.com/room/v1/Room/get_info?room_id=' +
                         roomID).content, encoding="utf-8"))['data']['room_id'])
-
 
 @room.on('DANMU_MSG')
 async def on_danmaku(event):
@@ -34,7 +28,6 @@ async def on_danmaku(event):
         print('表情::'+msgs)
     else:
         print('其他::'+msgs)
-
 
 @room.on('SEND_GIFT')
 async def on_gift(event):

@@ -13,11 +13,9 @@ print(response.usage)
 
 while True:
     str=input("Input Your Question: ")
-    conversation.append({"role":"user","content":str})
-    response=openai.ChatCompletion.create(model="gpt-3.5-turbo",messages=conversation)
+    message=conversation
+    message.append({"role":"user","content":str})
+    response=openai.ChatCompletion.create(model="gpt-3.5-turbo",message=conversation)
     print(response.choices[0].message.content)
     print(response.usage)
     print(response.id)
-
-
-
