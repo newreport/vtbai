@@ -38,7 +38,9 @@ danmuQue = PriorityQueue(maxsize=3)
 
 baseContext = [{"role": "system", "content": mainConfig['nya1']}]
 response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=baseContext)
-print(response['choices'][0]['message']['content'])
+time.sleep(1)
+print("主线程"+response['choices'][0]['message']['content'])
+
 message = []
 if os.path.exists(xlslPath) == False:
     workbook = xlwt.Workbook()
@@ -92,9 +94,11 @@ def send_msg(msg):
         model="gpt-3.5-turbo", messages=message)
     responseText = response['choices'][0]['message']['content']
     print("从gpt接收::"+responseText)
+    ### 报错
     vits.generated_speech(str(responseText))
-    pw = Process(target=write_keyboard_text, args=(str(responseText),))
-    pw.start()
+    write_keyboard_text(str(responseText))
+    # pw = Process(target=write_keyboard_text, args=(str(responseText),))
+    # pw.start()
     playsound('output/temp1.wav')
     with open('output/'+str(datetime.date.today())+'.txt', 'a') as a:
         a.write(str(datetime.datetime.now())+"::接收::"+str(responseText)+'\n')
@@ -169,11 +173,6 @@ async def on_gift(event):
                 a.write(str(event)+'\n')
                 a.flush()
 
-
-def p0():
-    while True:
-        print("0")
-        time.sleep(2)
 
 
 if __name__ == '__main__':

@@ -39,7 +39,6 @@ outdir = args.outdir
 
 # text="ドルの下落"
 def generated_speech(text):
-# text="为波西买一杯咖啡🍵 | [11/25]点我查看历史赞助表| [11/25]更新历史⬆ | [11/28]加入百科辞典QQ交流群吧！713069905"
     text = f"[JA]{text}[JA]" if is_japanese(text) else f"[ZH]{text}[ZH]"
     # 将文本字符串转换为id
     seq = text_to_sequence(text, symbols=hps.symbols, cleaner_names=hps.data.text_cleaners)
@@ -49,7 +48,11 @@ def generated_speech(text):
         x = np.array([seq], dtype=np.int64)
         x_len = np.array([x.shape[1]], dtype=np.int64)
         global sid
+        print("sid:"+str(sid))
         sid = np.array([sid], dtype=np.int64)
+        print("np.int64:"+str(np.int64))
+        print(np)
+        print("np.int64:"+str(np.int64))
         scales = np.array([0.667, 0.8, 1], dtype=np.float32)
         scales.resize(1, 3)
         ort_inputs = {

@@ -5,9 +5,9 @@ __pycache__/
 
 # User
 models/
-!models/Put Model To Here
+!models/Put Model To Here.txt
 output/
-!output/Put temp to here
+!output/Put temp to here.txt
 config.ini
 
 # C extensions
