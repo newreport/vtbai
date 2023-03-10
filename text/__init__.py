@@ -10,7 +10,7 @@ def text_to_sequence(text, symbols, cleaner_names):
     Returns:
       List of integers corresponding to the symbols in the text
   '''
-  print(text)
+  # print(text)
   _symbol_to_id = {s: i for i, s in enumerate(symbols)}
 
   sequence = []

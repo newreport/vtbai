@@ -9,6 +9,7 @@ model.onnx
 temp1.wav
 temp2.wav
 config.json
+config.ini
 
 # C extensions
 *.so
