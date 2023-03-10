@@ -11,12 +11,16 @@ from multiprocessing import Process
 import a_vits as vits
 import datetime
 from playsound import playsound
- 
+import xlrd
+import xlwt
+from xlutils.copy import copy
+
 
 # 配置文件、弹幕房间、chatgpt配置
 file = 'config.ini'
 tempFile = 'output/temp.txt'
-currTxt='output/currText.txt'
+currTxt = 'output/currText.txt'
+xlslPath = 'output/record.xlsx'
 
 con = configparser.ConfigParser()
 con.read(file, encoding='utf-8')
@@ -33,11 +37,36 @@ giftQue = PriorityQueue(maxsize=10)
 danmuQue = PriorityQueue(maxsize=3)
 
 baseContext = [{"role": "system", "content": mainConfig['nya1']}]
-response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo", messages=baseContext
-)
+response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=baseContext)
 print(response['choices'][0]['message']['content'])
 message = []
+if os.path.exists(xlslPath) == False:
+    workbook = xlwt.Workbook()
+    sheet = workbook.add_sheet("test")  # 在工作簿中新建一个表格
+    workbook.save(xlslPath)
+    print("xls格式表格初始化成功！")
+
+
+def write_excel_xls_append(value):
+    index = len(value)  # 获取需要写入数据的行数
+    workbook = xlrd.open_workbook(xlslPath)  # 打开工作簿
+
+    sheets = workbook.sheet_names()  # 获取工作簿中的所有表格
+    rows_old = 0
+    sheetName = str(datetime.date.today())
+    if sheetName in sheets:
+        worksheet = workbook.sheet_by_name(sheetName)
+        rows_old = worksheet.nrows  # 获取表格中已存在的数据的行数
+    new_workbook = copy(workbook)  # 将xlrd对象拷贝转化为xlwt对象
+    if sheetName not in sheets:
+        new_workbook.add_sheet(sheetName)
+    new_worksheet = new_workbook.get_sheet(0)  # 获取转化后工作簿中的第一个表格
+    for i in range(0, index):
+        for j in range(0, len(value[i])):
+            # 追加写入数据，注意是从i+rows_old行开始写入
+            new_worksheet.write(i+rows_old, j, value[i][j])
+    new_workbook.save(xlslPath)  # 保存工作簿
+    print("xls格式表格【追加】写入数据成功！")
 
 
 def write_keyboard_text(text):
@@ -50,38 +79,52 @@ def write_keyboard_text(text):
             w.write(txt)
             w.flush()
 
+
 def send_msg(msg):
     print('gpt当前进程id::'+str(os.getpid()))
     print("向gpt发送::"+msg)
     with open('output/'+str(datetime.date.today())+'.txt', 'a') as a:
-            a.write(str(datetime.datetime.now())+"::发送::"+str(msg)+'\n')
-            a.flush()
+        a.write(str(datetime.datetime.now())+"::发送::"+str(msg)+'\n')
+        a.flush()
     message = baseContext
     message.append({"role": "user", "content": msg})
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", messages=message)
-    responseText=response['choices'][0]['message']['content']
+    responseText = response['choices'][0]['message']['content']
     print("从gpt接收::"+responseText)
     vits.generated_speech(str(responseText))
     pw = Process(target=write_keyboard_text, args=(str(responseText),))
     pw.start()
     playsound('output/temp1.wav')
     with open('output/'+str(datetime.date.today())+'.txt', 'a') as a:
-            a.write(str(datetime.datetime.now())+"::接收::"+str(responseText)+'\n')
-            a.flush()
+        a.write(str(datetime.datetime.now())+"::接收::"+str(responseText)+'\n')
+        a.flush()
+        write_excel_xls_append(
+            [str(datetime.datetime.now()), "gpt", str(responseText)])
+
 
 def chatgpt35():
     print("运行gpt")
     while True:
         if topQue.qsize() > 0:
-            send_msg(topQue.get())
+            txt = topQue.get()
+            write_excel_xls_append([str(datetime.datetime.now()), "top", txt])
+            send_msg(txt)
         elif giftQue.qsize() > 0:
-            send_msg(giftQue.get())
+            txt = giftQue.get()
+            write_excel_xls_append([str(datetime.datetime.now()), "gift", txt])
+            send_msg(txt)
         elif scQue.qsize() > 0:
-            send_msg(scQue.get())
+            txt = scQue.get()
+            write_excel_xls_append([str(datetime.datetime.now()), "sc", txt])
+            send_msg(txt)
         elif danmuQue.qsize() > 0:
-            send_msg(danmuQue.get())
+            txt = danmuQue.get()
+            write_excel_xls_append(
+                [str(datetime.datetime.now()), "danmu", txt])
+            send_msg(txt)
         time.sleep(1)
+
 
 def filter_text(text):
     print("过滤::"+text)
@@ -126,16 +169,16 @@ async def on_gift(event):
                 a.write(str(event)+'\n')
                 a.flush()
 
+
 def p0():
     while True:
         print("0")
         time.sleep(2)
 
 
-
-if __name__ =='__main__':
+if __name__ == '__main__':
     print('当前进程id::'+str(os.getpid()))
-    _thread.start_new_thread(chatgpt35,())
+    _thread.start_new_thread(chatgpt35, ())
     _thread.start_new_thread(sync, (room.connect(),))
     input('input q to ecs')
     print('All subprocesses done.')

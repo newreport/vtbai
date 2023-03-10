@@ -4,11 +4,8 @@ __pycache__/
 *$py.class
 
 # User
-temp.txt
-model.onnx
-temp1.wav
-temp2.wav
-config.json
+models/
+output/
 config.ini
 
 # C extensions
