@@ -8,7 +8,7 @@ models/
 !models/Put Model To Here.txt
 output/
 !output/Put temp to here.txt
-config.ini
+my_config.ini
 
 # C extensions
 *.so

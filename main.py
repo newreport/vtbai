@@ -8,7 +8,7 @@ import requests
 import os
 import _thread
 from multiprocessing import Process
-import a_vits as vits
+import my_vits as vits
 import datetime
 from playsound import playsound
 import xlrd
@@ -23,6 +23,9 @@ currTxt = 'output/currText.txt'
 xlslPath = 'output/record.xlsx'
 
 con = configparser.ConfigParser()
+if os.path.exists('my_config.ini'):
+    file='my_config.ini'
+
 con.read(file, encoding='utf-8')
 sections = con.sections()
 mainConfig = dict(con.items('main'))
@@ -55,7 +58,6 @@ def write_excel_xls_append(value):
     sheets = workbook.sheet_names()  # 获取工作簿中的所有表格
     rows_old = 0
     sheetName = str(datetime.date.today())
-    print("sheetName::"+sheetName)
     if sheetName in sheets:
         worksheet = workbook.sheet_by_name(sheetName)
         rows_old = worksheet.nrows  # 获取表格中已存在的数据的行数
