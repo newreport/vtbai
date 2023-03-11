@@ -47,12 +47,9 @@ def generated_speech(text):
     with torch.no_grad():
         x = np.array([seq], dtype=np.int64)
         x_len = np.array([x.shape[1]], dtype=np.int64)
-        global sid
-        print("sid:"+str(sid))
+        global sid 
+        sid =0
         sid = np.array([sid], dtype=np.int64)
-        print("np.int64:"+str(np.int64))
-        print(np)
-        print("np.int64:"+str(np.int64))
         scales = np.array([0.667, 0.8, 1], dtype=np.float32)
         scales.resize(1, 3)
         ort_inputs = {

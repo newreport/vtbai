@@ -72,7 +72,8 @@ def write_excel_xls_append(value):
 
 
 def write_keyboard_text(text):
-    print('vits当前进程id::'+str(os.getpid()))
+    if mainConfig['env'] == 'dev':
+        print('vits当前进程id::'+str(os.getpid()))
     with open(currTxt, 'w') as w:
         w.write('')
         w.flush()
@@ -83,7 +84,8 @@ def write_keyboard_text(text):
 
 
 def send_msg(msg):
-    print('gpt当前进程id::'+str(os.getpid()))
+    if mainConfig['env'] == 'dev':
+        print('gpt当前进程id::'+str(os.getpid()))
     print("向gpt发送::"+msg)
     with open('output/'+str(datetime.date.today())+'.txt', 'a') as a:
         a.write(str(datetime.datetime.now())+"::发送::"+str(msg)+'\n')
@@ -137,7 +139,8 @@ def filter_text(text):
 
 @room.on('DANMU_MSG')
 async def on_danmaku(event):
-    print('弹幕当前进程id::'+str(os.getpid()))
+    if mainConfig['env'] == 'dev':
+        print('弹幕当前进程id::'+str(os.getpid()))
     # 收到弹幕
     name = event['data']['info'][2][1]
     msg = event['data']['info'][1]
