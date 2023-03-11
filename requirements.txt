@@ -16,4 +16,10 @@ ko_pron
 indic_transliteration
 num_thai
 opencc
+openai
 audonnx
+bilibili_api
+playsound
+xlrd
+xlwt
+xlutils

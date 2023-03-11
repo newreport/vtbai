@@ -50,23 +50,22 @@ if os.path.exists(xlslPath) == False:
 
 
 def write_excel_xls_append(value):
-    index = len(value)  # 获取需要写入数据的行数
     workbook = xlrd.open_workbook(xlslPath)  # 打开工作簿
 
     sheets = workbook.sheet_names()  # 获取工作簿中的所有表格
     rows_old = 0
     sheetName = str(datetime.date.today())
+    print("sheetName::"+sheetName)
     if sheetName in sheets:
         worksheet = workbook.sheet_by_name(sheetName)
         rows_old = worksheet.nrows  # 获取表格中已存在的数据的行数
     new_workbook = copy(workbook)  # 将xlrd对象拷贝转化为xlwt对象
     if sheetName not in sheets:
         new_workbook.add_sheet(sheetName)
-    new_worksheet = new_workbook.get_sheet(0)  # 获取转化后工作簿中的第一个表格
-    for i in range(0, index):
-        for j in range(0, len(value[i])):
-            # 追加写入数据，注意是从i+rows_old行开始写入
-            new_worksheet.write(i+rows_old, j, value[i][j])
+    new_worksheet = new_workbook.get_sheet(sheetName)  # 获取转化后工作簿中的第一个表格
+    new_worksheet.write(rows_old, 0, value[0])
+    new_worksheet.write(rows_old, 0, value[1])
+    new_worksheet.write(rows_old, 0, value[2])
     new_workbook.save(xlslPath)  # 保存工作簿
     print("xls格式表格【追加】写入数据成功！")
 
@@ -90,6 +89,8 @@ def send_msg(msg):
     with open('output/'+str(datetime.date.today())+'.txt', 'a') as a:
         a.write(str(datetime.datetime.now())+"::发送::"+str(msg)+'\n')
         a.flush()
+    vits.generated_speech(msg)
+    playsound('output/temp1.wav')
     message = baseContext
     message.append({"role": "user", "content": msg})
     response = openai.ChatCompletion.create(
