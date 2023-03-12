@@ -14,6 +14,7 @@ from playsound import playsound
 import xlrd
 import xlwt
 from xlutils.copy import copy
+from pypinyin import  lazy_pinyin
 
 
 # 配置文件、弹幕房间、chatgpt配置
@@ -21,6 +22,17 @@ file = 'config.ini'
 tempFile = 'output/temp.txt'
 currTxt = 'output/currText.txt'
 xlslPath = 'output/record.xlsx'
+
+f =open(r'my_sensitive_words.txt','r', encoding='utf-8')
+s=f.readlines()
+for i in range(len(s)):
+    s[i]=s[i].replace('\n','')
+print(s)
+sensitiveWord=list(s)
+print(sensitiveWord[0])
+print(sensitiveWord[1])
+print(lazy_pinyin(sensitiveWord[0]))
+print(str.join('', lazy_pinyin(sensitiveWord[1])))
 
 con = configparser.ConfigParser()
 if os.path.exists('my_config.ini'):
@@ -154,13 +166,13 @@ async def on_danmaku(event):
         with open(tempFile, 'a') as a:
             a.write(str(event)+'\n')
             a.flush()
-    if msgType == 0:
-        if filter_text(msg):
-            danmuQue.put(msgs)
-    elif msgType == 1:
-        print('表情::'+msgs)
-    else:
-        print('其他::'+msgs)
+    if filter_text(msg):
+        if msgType == 0:
+            danmuQue.put({"name": name, "action":'说',"msg":msg})
+        elif msgType == 1:
+            print('表情::'+msgs)
+        else:
+            print('其他::'+msgs)
 
 
 @room.on('SEND_GIFT')
@@ -172,8 +184,8 @@ async def on_gift(event):
         num = event['data']['data']['batch_combo_send']['gift_num']
         gift = event['data']['data']['batch_combo_send']['gift_name']
         msgs = name+action+str(num)+'个'+gift
-        print("礼物::"+msgs)
-        scQue.put(9, '感谢'+msgs)
+        if filter_text(name):
+            scQue.put({"name": name, "action":'感谢',"msg":gift},9)
         if mainConfig['env'] == 'dev':
             with open('girf.txt', 'a') as a:
                 a.write(str(event)+'\n')
