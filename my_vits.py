@@ -38,7 +38,7 @@ ort_sess = ort.InferenceSession(args.onnx_model)
 outdir = args.outdir
 
 # text="ドルの下落"
-def generated_speech(text):
+def generated_speech(text,fileName):
     text = f"[JA]{text}[JA]" if is_japanese(text) else f"[ZH]{text}[ZH]"
     # 将文本字符串转换为id
     seq = text_to_sequence(text, symbols=hps.symbols, cleaner_names=hps.data.text_cleaners)
@@ -67,7 +67,7 @@ def generated_speech(text):
         print(spending_time)
         bytes_wav = bytes()
         byte_io = io.BytesIO(bytes_wav)
-        wavfile.write(outdir + '/temp1.wav',hps.data.sampling_rate, audio.astype(np.int16))
+        wavfile.write(outdir + '/'+fileName,hps.data.sampling_rate, audio.astype(np.int16))
         # cmd = 'ffmpeg -y -i ' +  outdir + '/temp1.wav' + ' -ar 44100 '+ outdir + '/temp2.wav'
         # os.system(cmd)
 

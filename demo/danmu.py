@@ -43,5 +43,5 @@ async def on_gift(event):
             with open('gift.txt', 'a') as a:
                 a.write(str(event)+'\n')
                 a.flush()
-
-sync(room.connect())
+if __name__ == '__main__':
+    sync(room.connect())
