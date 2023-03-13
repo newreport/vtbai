@@ -71,7 +71,7 @@ def send2gpt(msg):
     # 发送给gpt
     tempMessage.append({"role": "user", "content": sendGptMsg})
     if len(tempMessage) > 3:
-        del(tempMessage[0])
+        del (tempMessage[0])
     message = baseContext+tempMessage
     print(message)
 
@@ -79,6 +79,8 @@ def send2gpt(msg):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", messages=message)
     responseText = str(response['choices'][0]['message']['content'])
+    if filter_text(responseText) == False:
+        return
     print("从gpt接收::"+responseText)
 
     # 生成发送语言
