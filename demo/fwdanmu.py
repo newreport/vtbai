@@ -5,13 +5,14 @@ import requests
 
 env = 'pro'  # dev|pro
 
-roomID = '207640'
+roomID = ''
 # 获取房间真实 id
 room = live.LiveDanmaku(json.loads(str(requests.get('https://api.live.bilibili.com/room/v1/Room/get_info?room_id=' +
                         roomID).content, encoding="utf-8"))['data']['room_id'])
 
 @room.on('DANMU_MSG')
 async def on_danmaku(event):
+    print(event)
     # 收到弹幕
     name = event['data']['info'][2][1]
     msg = event['data']['info'][1]
@@ -31,6 +32,7 @@ async def on_danmaku(event):
 
 @room.on('SEND_GIFT')
 async def on_gift(event):
+    print(event)
     # 收到礼物
     if event['data']['data']['batch_combo_send'] is not None:
         name = event['data']['data']['batch_combo_send']['uname']
