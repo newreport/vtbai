@@ -288,7 +288,7 @@ if os.path.exists(xlslPATH) == False:
     workbook = xlwt.Workbook()
     sheet = workbook.add_sheet("test")  # 在工作簿中新建一个表格
     workbook.save(xlslPATH)
-    print("xls格式表格初始化成功！")
+    print("xls格式表格初始化1成功！")
     print('当前进程id::'+str(os.getpid()))
 
 def run_danmu():
