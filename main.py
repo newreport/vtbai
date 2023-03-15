@@ -1,5 +1,6 @@
 import openai
 import asyncio
+import _thread
 import random
 import blivedm.blivedm as blivedm
 import configparser
@@ -81,8 +82,21 @@ def send2gpt(msg):
         sendGptMsg = msg['name']+msg['action'] + \
             msg['msg']+',花了'+msg['price']+'元'
         sendVitsMsg = msg['name']+msg['action'] + msg['msg']
-
+    # 发送给gpt
+    tempMessage.append({"role": "user", "content": sendGptMsg})
+    if len(tempMessage) > 3:
+        del (tempMessage[0])
+    message = baseContext+tempMessage
     print("向gpt发送::"+sendGptMsg)
+    p = multiprocessing.Process(target=rec2tts, args=(
+        msg, sendGptMsg, message, sendVitsMsg))
+    p.start()
+    print("循环中start...")
+    p.join()
+    print("循环中end...")
+
+
+def rec2tts(msg, sendGptMsg, message, sendVitsMsg):
     # 对话日志 excel
     with open('output/'+str(datetime.date.today())+'.txt', 'a') as a:
         a.write(str(datetime.datetime.now())+"::发送::"+sendGptMsg+'\n')
@@ -96,13 +110,6 @@ def send2gpt(msg):
             'msg': msg['msg'],
             'price': msg['price']
         })
-
-    # 发送给gpt
-    tempMessage.append({"role": "user", "content": sendGptMsg})
-    if len(tempMessage) > 3:
-        del (tempMessage[0])
-    message = baseContext+tempMessage
-
     # 接收
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", messages=message)
@@ -140,28 +147,40 @@ def send2gpt(msg):
 def chatgpt35():
     print("运行gpt循环任务")
     while True:
-        chatObj = [0, {"name": '', "type": '', 'num': 0,
-                       'action': '', 'msg': '', 'price': 0}]
+        chatObj = {"name": '', "type": '', 'num': 0,
+                       'action': '', 'msg': '', 'price': 0}
         # 从队列获取信息
         try:
-            if topQue.qsize() > 0:
+            if topQue.empty()==False:
                 chatObj = topQue.get(True, 1)
-            elif guardQue.qsize() > 0:
+            elif guardQue.empty()==False:
                 chatObj = guardQue.get(True, 1)
-            elif giftQue.qsize() > 0:
+                chatObj = chatObj[1]
+            elif giftQue.empty()==False:
                 chatObj = giftQue.get(True, 1)
-            elif scQue.qsize() > 0:
+                chatObj = chatObj[1]
+            elif scQue.empty()==False:
                 chatObj = scQue.get(True, 1)
-            elif danmuQue.qsize() > 0:
+                chatObj = chatObj[1]
+            elif danmuQue.empty()==False:
                 chatObj = danmuQue.get(True, 1)
-            chatObj = chatObj[1]
-        except:
-            time.sleep(0)
+                chatObj = chatObj[1]
+            # print(chatObj)
+            # chatObj = chatObj[1]
+        except Exception as e:
+            print("-----------ErrorStart--------------")
+            print(e)
+            print("gpt获取弹幕异常")
+            print(chatObj)
+            print("-----------ErrorEnd--------------")
+            time.sleep(2)
             continue
+        print(chatObj)
         # 过滤队列
         if len(chatObj['name']) > 0:
             if filter_text(chatObj['name']) and filter_text(chatObj['msg']):
                 send2gpt(chatObj)
+                print("子进程退出")
         else:
             time.sleep(1)
 
@@ -196,23 +215,48 @@ class MyHandler(blivedm.BaseHandler):
             privilege_type = message.privilege_type
             if privilege_type == 0:
                 privilege_type = 9
-            rank = (99999-message.user_level*10+(10-privilege_type)
-                    * 10+message.mobile_verify*10)
-            print("rank:"+str(rank)+";name:"+message.uname+";msg:"+message.msg.replace('[', '').replace(']', ''))
-            danmuQue.put((rank, {'name': message.uname, 'type': 'danmu','num': 1, 'action': '说', 'msg': message.msg.replace('[', '').replace(']', ''), 'price': 0}))
+            rank = (99999-message.user_level*100+(10-privilege_type)
+                    * 10+message.mobile_verify*10)+random.random()
+            if danmuQue.full():
+                try:
+                    danmuQue.get(False, 2)
+                except:
+                    print("on_danmuku时，get异常")
+            print("rank:"+str(rank)+";name:"+message.uname+";msg:" +
+                  message.msg.replace('[', '').replace(']', ''))
+          
+            queData={'name': message.uname, 'type': 'danmu', 'num': 1, 'action': '说',
+                         'msg': message.msg.replace('[', '').replace(']', ''), 'price': 0}
+            # print("前弹幕队列容量："+str(danmuQue.qsize()))
+            # print(queData)
+            try:
+                danmuQue.put((rank,queData),True,2)
+            except Exception as e:
+                 print("ErrorStart-------------------------")
+                 print(e)
+                 print("put弹幕队列异常")
+                 print(queData)
+                 print("ErrorEnd-------------------------")
+                 print("错误"+str(danmuQue.full()))
+                 print("错误"+str(danmuQue.empty()))
+                 print("后弹幕队列容量："+str(danmuQue.qsize()))
+
+            # print("后弹幕队列容量："+str(danmuQue.qsize()))
 
     async def _on_gift(self, client: blivedm.BLiveClient, message: blivedm.GiftMessage):
         if message.coin_type == 'gold':
             print(f'礼物：[{client.room_id}] {message.uname} 赠送{message.gift_name}x{message.num}'
                   f' （{message.coin_type}瓜子x{message.total_coin}）')
             price = message.total_coin/1000
+            if giftQue.full():
+                giftQue.get(False, 1)
             if price > 1:
-                giftQue.put((999999-price, {"name": message.uname, "type": 'gift',
-                                            'num': message.num, 'action': message.action, 'msg': '-1', 'price': price}))
+                giftQue.put((999999-price+random.random(), {"name": message.uname, "type": 'gift',
+                                            'num': message.num, 'action': message.action, 'msg': '-1', 'price': price}), 1)
 
     async def _on_buy_guard(self, client: blivedm.BLiveClient, message: blivedm.GuardBuyMessage):
         print(f'上舰：[{client.room_id}] {message.username} 购买{message.gift_name}')
-        guardQue((message.guard_level, {
+        guardQue((message.guard_level+random.random(), {
             "name": message.username, "type": 'guard',
             'num': 1, 'action': '上', 'msg': '-1', 'price': message.price/1000}))
 
@@ -220,18 +264,9 @@ class MyHandler(blivedm.BaseHandler):
         print(
             f'SC:[{client.room_id}] 醒目留言 ¥{message.price} {message.uname}：{message.message}')
         # 名称、类型、数量、动作、消息、价格
-        scQue.put((999999-message.price, {"name": message.uname, "type": 'sc',
+        scQue.put((999999-message.price+random.random(), {"name": message.uname, "type": 'sc',
                                           'num': 1, 'action': '发送', 'msg': message.message, 'price': message.price}))
 
-def cleanQue():
-    while True:
-        try:
-            if giftQue.full():
-                giftQue.get(True, 1)
-            elif danmuQue.full():
-                danmuQue.get(True, 1)
-        except:
-            print("满了")
 
 # 配置文件、日志、当前文本、记录excel、敏感词文本
 configINI = 'config.ini'
@@ -250,7 +285,7 @@ mainConfig = dict(con.items('main'))
 roomID = json.loads(str(requests.get('https://api.live.bilibili.com/room/v1/Room/get_info?room_id=' +
                                      mainConfig['roomid']).content, encoding="utf-8"))['data']['room_id']
 openai.api_key = mainConfig['key']
-openai.api_base=mainConfig['proxy_domain']
+openai.api_base = mainConfig['proxy_domain']
 baseContext = [{"role": "system", "content": mainConfig['nya1']}]
 response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo", messages=baseContext)
@@ -288,21 +323,21 @@ if os.path.exists(xlslPATH) == False:
     workbook = xlwt.Workbook()
     sheet = workbook.add_sheet("test")  # 在工作簿中新建一个表格
     workbook.save(xlslPATH)
-    print("xls格式表格初始化1成功！")
+    print("xls格式表格初始化成功！")
     print('当前进程id::'+str(os.getpid()))
 
-def run_danmu():
-    # loop=asyncio.new_event_loop()
-    # print("开始")
-    # loop.run_forever(run_single_client)
-    # print("结束")
-    asyncio.get_event_loop().run_until_complete(run_single_client())
+# def run_danmu():
+#     # loop=asyncio.new_event_loop()
+#     # print("开始")
+#     # loop.run_forever(run_single_client)
+#     # print("结束")
+#     asyncio.get_event_loop().run_until_complete(run_single_client())
 
 if __name__ == '__main__':
     isRun = True
-    pool = multiprocessing.Pool(processes = 2)
-    pool.apply_async(run_danmu)
-    pool.apply_async(chatgpt35)
+    _thread.start_new_thread(chatgpt35, ())
+    _thread.start_new_thread(asyncio.get_event_loop(
+    ).run_until_complete, (run_single_client(),))
     print('All subprocesses start.')
     time.sleep(2)
     input('input to exit::')

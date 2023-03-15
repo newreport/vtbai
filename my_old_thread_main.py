@@ -57,7 +57,6 @@ def write_keyboard_text(text):
 
 
 def send2gpt(msg):
-    return
     if mainConfig['env'] == 'dev':
         print('gpt当前进程id::'+str(os.getpid()))
 
