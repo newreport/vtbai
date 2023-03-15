@@ -57,7 +57,6 @@ def write_keyboard_text(text):
 
 
 def send2gpt(msg):
-    return
     if mainConfig['env'] == 'dev':
         print('gpt当前进程id::'+str(os.getpid()))
 
@@ -253,6 +252,7 @@ mainConfig = dict(con.items('main'))
 roomID = json.loads(str(requests.get('https://api.live.bilibili.com/room/v1/Room/get_info?room_id=' +
                                      mainConfig['roomid']).content, encoding="utf-8"))['data']['room_id']
 openai.api_key = mainConfig['key']
+openai.api_base= mainConfig['key']
 baseContext = [{"role": "system", "content": mainConfig['nya1']}]
 response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo", messages=baseContext)
@@ -298,8 +298,7 @@ if __name__ == '__main__':
     isRun = True
     _thread.start_new_thread(cleanQue, ())
     _thread.start_new_thread(chatgpt35, ())
-    _thread.start_new_thread(asyncio.get_event_loop(
-    ).run_until_complete, (run_single_client(),))
+    asyncio.get_event_loop().run_until_complete(run_single_client())
     print('All subprocesses start.')
     time.sleep(2)
     input('input to exit::')

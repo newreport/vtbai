@@ -1,7 +1,8 @@
 import os
 import openai
 
-openai.api_key = ""
+openai.api_key=''
+openai.api_base=''
 conversation=[{"role":"system","content":"你是一只会猫猫叫的猫娘，说话要带上喵"},{"role":"user","content":"我的上一句话是什么"}]
 response=openai.ChatCompletion.create(model="gpt-3.5-turbo",messages=conversation)
 context=response.id
