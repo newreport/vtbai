@@ -75,6 +75,6 @@ def generated_speech(text,fileName):
 
 
 if __name__ == '__main__':
-     str1="你好呀，我的名字是七奈，现在五点了，下午好，喵喵喵~喵喵~喵~~喵喵喵~"
+     str1="你好呀，我的名字是猫猫，现在五点了，下午好，喵喵喵~喵喵~喵~~喵喵喵~"
     #  generated_speech(str1,'temp1.wav')
      generated_speech(str1,'temp1.wav')
