@@ -4,3 +4,4 @@ wget -O models/model.onnx  https://huggingface.co/Mahiruoshi/vits_onnx_model/res
 wget -O models/config.json  https://huggingface.co/Mahiruoshi/vits_onnx_model/resolve/main/config.json
 
 pip install requirements.txt
+git submodule update --init --recursive

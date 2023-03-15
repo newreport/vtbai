@@ -23,3 +23,5 @@ playsound
 xlrd
 xlwt
 xlutils
+torchvision
+asyncio
