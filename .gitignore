@@ -9,7 +9,6 @@ models/
 output/
 !output/Put temp to here.txt
 my_config.ini
-my_sensitive_words.txt
 
 # C extensions
 *.so
