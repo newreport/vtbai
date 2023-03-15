@@ -175,7 +175,7 @@ def chatgpt35():
             print("-----------ErrorEnd--------------")
             time.sleep(2)
             continue
-        print(chatObj)
+        # print(chatObj)
         # 过滤队列
         if len(chatObj['name']) > 0:
             if filter_text(chatObj['name']) and filter_text(chatObj['msg']):
@@ -222,13 +222,15 @@ class MyHandler(blivedm.BaseHandler):
                     danmuQue.get(False, 2)
                 except:
                     print("on_danmuku时，get异常")
-            print("rank:"+str(rank)+";name:"+message.uname+";msg:" +
-                  message.msg.replace('[', '').replace(']', ''))
+
           
             queData={'name': message.uname, 'type': 'danmu', 'num': 1, 'action': '说',
                          'msg': message.msg.replace('[', '').replace(']', ''), 'price': 0}
             # print("前弹幕队列容量："+str(danmuQue.qsize()))
-            # print(queData)
+
+            # print("rank:"+str(rank)+";name:"+message.uname+";msg:" +
+            #       message.msg.replace('[', '').replace(']', ''))
+            # # print(queData)
             try:
                 danmuQue.put((rank,queData),True,2)
             except Exception as e:
@@ -256,7 +258,7 @@ class MyHandler(blivedm.BaseHandler):
 
     async def _on_buy_guard(self, client: blivedm.BLiveClient, message: blivedm.GuardBuyMessage):
         print(f'上舰：[{client.room_id}] {message.username} 购买{message.gift_name}')
-        guardQue((message.guard_level+random.random(), {
+        guardQue.put((message.guard_level+random.random(), {
             "name": message.username, "type": 'guard',
             'num': 1, 'action': '上', 'msg': '-1', 'price': message.price/1000}))
 
