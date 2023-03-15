@@ -8,8 +8,6 @@ import onnxruntime as ort
 import io
 import torchvision.models as models
 from scipy.io import wavfile
-import os
-import sys
 import time
 from text import text_to_sequence
 

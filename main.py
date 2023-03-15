@@ -47,13 +47,14 @@ def write_excel_xls_append(value):
 def write_keyboard_text(text):
     if mainConfig['env'] == 'dev':
         print('vits当前进程id::'+str(os.getpid()))
-    with open(currTXT, 'w') as w:
+    with open(currTXT, 'w',encoding='utf-8') as w:
         w.write('')
         w.flush()
-    with open(currTXT, 'a') as w:
-        for txt in text:
+    for txt in text:
+        with open(currTXT, 'a',encoding='utf-8') as w:
             w.write(txt)
             w.flush()
+        time.sleep(0.03)
 
 
 def send2gpt(msg):
@@ -67,7 +68,7 @@ def send2gpt(msg):
         sendGptMsg = msg['name']+msg['action']+msg['msg']
         sendVitsMsg = msg['msg']
     elif msg['type'] == 'sc':
-        sendGptMsg = msg['name']+msg['action']+msg['price']+'块钱sc说'+msg['msg']
+        sendGptMsg = msg['name']+msg['action']+str(msg['price'])+'块钱sc说'+msg['msg']
         sendVitsMsg = sendGptMsg
     elif msg['type'] == 'guard':
         guardType = '舰长'
@@ -76,11 +77,10 @@ def send2gpt(msg):
         elif msg['price'] > 2000:
             guardType = '总督'
         sendGptMsg = msg['name']+msg['action'] + \
-            guardType+'了,花了'+msg['price']+'元'
+            guardType+'了,花了'+str(msg['price'])+'元'
         sendVitsMsg = msg['name']+msg['action'] + guardType+'了'
     elif msg['type'] == 'gift':
-        sendGptMsg = msg['name']+msg['action'] + \
-            msg['msg']+',花了'+msg['price']+'元'
+        sendGptMsg = msg['name']+msg['action'] +',花了'+str(msg['price'])+'元'
         sendVitsMsg = msg['name']+msg['action'] + msg['msg']
     # 发送给gpt
     tempMessage.append({"role": "user", "content": sendGptMsg})
@@ -98,7 +98,7 @@ def send2gpt(msg):
 
 def rec2tts(msg, sendGptMsg, message, sendVitsMsg):
     # 对话日志 excel
-    with open('output/'+str(datetime.date.today())+'.txt', 'a') as a:
+    with open('output/'+str(datetime.date.today())+'.txt', 'a',encoding='utf-8') as a:
         a.write(str(datetime.datetime.now())+"::发送::"+sendGptMsg+'\n')
         a.flush()
         write_excel_xls_append({
@@ -130,7 +130,7 @@ def rec2tts(msg, sendGptMsg, message, sendVitsMsg):
     playsound('output/recVits.wav')
 
     # 对话日志
-    with open('output/'+str(datetime.date.today())+'.txt', 'a') as a:
+    with open('output/'+str(datetime.date.today())+'.txt', 'a',encoding='utf-8') as a:
         a.write(str(datetime.datetime.now())+"::接收::"+responseText+'\n')
         a.flush()
         write_excel_xls_append({
