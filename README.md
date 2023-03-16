@@ -1,8 +1,9 @@
 # 引用
-- [blivedm](https://github.com/xfgryujk/blivedm/tree/master) 抓取 b 站弹幕、sc、舰长、礼物
-- [jaywalnut310](https://github.com/jaywalnut310/vits) vits source
-- [CjangCjengh](https://github.com/CjangCjengh/MoeGoe.git) vits chinese
-- [Paraworks](https://github.com/Paraworks/vits_with_chatgpt-gpt3) vits 推理参考
+
+- [vits](https://github.com/jaywalnut310/vits) vits source
+- [MoeGoe](https://github.com/CjangCjengh/MoeGoe.git) vits chinese
+- [vits_with_chatgpt-gpt3](https://github.com/Paraworks/vits_with_chatgpt-gpt3) tts 推理参考
+- [blivedm](https://github.com/xfgryujk/blivedm/tree/master) 抓取 b 站直播间信息
 - [演示模型](https://huggingface.co/Mahiruoshi/vits_onnx_model/tree/main) vits model
 
 # 架构
@@ -15,7 +16,7 @@
 >  注：有能者可以同理把老鼠和油管的扩展了，py 线程协程进程鲨我
 
 ## 工作流
-blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 文本转语音）——>vts（语音转口型，快捷键触发表情）
+blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 文本转语音）——>vts（语音转口型，快捷键触发表情）——>obs(推流)
 
 ## 性能
 - CPU：5700G
@@ -44,6 +45,7 @@ mkdir output
 2. 下载 vits 模型和配置
 
 放入 models/
+
 https://huggingface.co/Mahiruoshi/vits_onnx_model/resolve/main/model.onnx 
 https://huggingface.co/Mahiruoshi/vits_onnx_model/resolve/main/config.json
 
@@ -61,7 +63,7 @@ cp sensitive_words.txt my_sensitive_words.txt
 4. 替换 jieba 路径
 
 将 MoeGoe/text/mandarin.py 中 
-> jieba.set_dictionary(os.path.dirname(sys.argv[0])+'/jieba/dict.txt')
+> jieba.set_dictionary(os.path.dirname(sys.argv[0])+'/jieba/dict.txst')
 
 替换为
 

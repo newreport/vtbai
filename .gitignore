@@ -5,12 +5,10 @@ __pycache__/
 
 # User
 models/
-!models/Put Model To Here.txt
 output/
-!output/Put temp to here.txt
 my_config.ini
 my_sensitive_words.txt
-
+temp.txt
 # C extensions
 *.so
 
