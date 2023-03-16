@@ -270,9 +270,8 @@ class MyHandler(blivedm.BaseHandler):
                                           'num': 1, 'action': '发送', 'msg': message.message, 'price': message.price}))
 
 
-# 配置文件、日志、当前文本、记录excel、敏感词文本
+# 配置文件、当前文本、excel（对话列表数据库）、敏感词文本
 configINI = 'config.ini'
-tempTXT = 'output/temp.txt'
 currTXT = 'output/currText.txt'
 xlslPATH = 'output/record.xlsx'
 sensitiveTXT = 'sensitive_words.txt'
