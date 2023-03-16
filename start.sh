@@ -1,3 +1,6 @@
+# ENV::Ubuntu 22.04 LTS
+
+# 安装 gcc 环境
 mkdir models
 mkdir output
 wget -O models/model.onnx  https://huggingface.co/Mahiruoshi/vits_onnx_model/resolve/main/model.onnx 
