@@ -7,7 +7,7 @@
 - [演示模型](https://huggingface.co/Mahiruoshi/vits_onnx_model/tree/main) vits model
 
 # 架构
-> 从哔哩哔哩直播间抓取弹幕和礼物，接收后发送给 openai 官方的 chatgpt，等待 gpt 回调消息后使用 vits 进行 tts（文本转语音）推理，然后根据关键字触发 vts 的表情快捷键和 playsound 播放语音， 播放时 vts 根据声音匹配口型  
+> 从哔哩哔哩直播间抓取弹幕和礼物，接收后发送给 openai 官方的 chatgpt，等待 gpt 回调消息后使用 vits 进行 tts 推理，然后根据关键字触发 vts 的表情快捷键和 playsound 播放语音， 播放时 vts 根据声音匹配口型  
 
 > 除非公司或大佬，非常不建议手搓 live2d，一是耗时，二是目前的 vts 和 prprlive 配合关键字触发表情快捷键直播效果还可以  
 
