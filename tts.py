@@ -1,15 +1,15 @@
 
 import argparse
-import utils
+import MoeGoe.utils as utils
 import numpy as np
 import torch
-import commons
+import MoeGoe.commons as commons
 import onnxruntime as ort
 import io
 import torchvision.models as models
 from scipy.io import wavfile
 import time
-from vits.text import text_to_sequence
+from MoeGoe.text import text_to_sequence
 
 
 def is_japanese(string):
@@ -23,9 +23,6 @@ def get_args():
     parser.add_argument('--onnx_model', default = './models/model.onnx')
     # 模型配置
     parser.add_argument('--cfg', default="./models/config.json")
-    # 输出目录
-    parser.add_argument('--outdir', default="./output",
-                        help='ouput directory')
     args = parser.parse_args()
     return args
 
@@ -36,8 +33,7 @@ sid = 0
 ort_sess = ort.InferenceSession(args.onnx_model)
 outdir = args.outdir
 
-
-# text="ドルの下落"
+# 生成语音
 def generated_speech(text,fileName):
     text = f"[JA]{text}[JA]" if is_japanese(text) else f"[ZH]{text}[ZH]"
     # 将文本字符串转换为id
@@ -66,13 +62,12 @@ def generated_speech(text,fileName):
         spending_time = "推理时间："+str(t2-t1)+"s" 
         print(spending_time)
         bytes_wav = bytes()
-        byte_io = io.BytesIO(bytes_wav)
-        wavfile.write(outdir + '/'+fileName,hps.data.sampling_rate, audio.astype(np.int16))
+        # byte_io = io.BytesIO(bytes_wav)
+        wavfile.write('output/'+fileName,hps.data.sampling_rate, audio.astype(np.int16))
         # cmd = 'ffmpeg -y -i ' +  outdir + '/temp1.wav' + ' -ar 44100 '+ outdir + '/temp2.wav'
         # os.system(cmd)
 
 
 if __name__ == '__main__':
-     str1="你好呀，我的名字是猫猫，现在五点了，下午好，喵喵喵~喵喵~喵~~喵喵喵~"
-    #  generated_speech(str1,'temp1.wav')
+     str1="你好呀，我的名字是七奈，现在五点了，下午好，喵喵喵~喵喵~喵~~喵喵喵~"
      generated_speech(str1,'temp1.wav')

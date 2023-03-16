@@ -2,5 +2,5 @@
     path = blivedm
     url = https://github.com/xfgryujk/blivedm.git
 [submodule "MoeGoe"]
-    path = moevits
-    url = https://github.com/CjangCjengh/MoeGoe.git
+	path = MoeGoe
+	url = https://github.com/CjangCjengh/MoeGoe.git
