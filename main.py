@@ -298,7 +298,7 @@ class MyHandler(blivedm.BaseHandler):
 
 
 # 配置文件、当前文本、excel（对话列表数据库）、敏感词文本
-configINI = 'cconfig/onfig.ini'
+configINI = 'config/config.ini'
 currTXT = 'output/currText.txt'
 xlslPATH = 'output/record.xlsx'
 sensitiveTXT = 'config/sensitive_words.txt'

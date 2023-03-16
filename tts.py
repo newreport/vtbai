@@ -1,8 +1,4 @@
 import argparse
-import MoeGoe.utils as utils
-import numpy as np
-import torch
-import MoeGoe.commons as commons
 import onnxruntime as ort
 import io
 import torchvision.models as models
@@ -10,8 +6,12 @@ from scipy.io import wavfile
 import time
 import os
 import sys
+import numpy as np
+import torch
 sys.path.append('MoeGoe')
-from MoeGoe.text import text_to_sequence
+from text import text_to_sequence
+import utils as utils
+import commons as commons
 
 def is_japanese(string):
     for ch in string:
