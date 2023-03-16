@@ -1,8 +1,8 @@
 # 引用
+- [blivedm](https://github.com/xfgryujk/blivedm/tree/master) 抓取 b 站弹幕、sc、舰长、礼物
 - [jaywalnut310](https://github.com/jaywalnut310/vits) vits source
 - [CjangCjengh](https://github.com/CjangCjengh/MoeGoe.git) vits chinese
 - [Paraworks](https://github.com/Paraworks/vits_with_chatgpt-gpt3) vits 推理参考
-- [blivedm](https://github.com/xfgryujk/blivedm/tree/master) 抓取 b 站弹幕、sc、舰长、礼物
 - [演示模型](https://huggingface.co/Mahiruoshi/vits_onnx_model/tree/main) vits model
 
 # 架构

@@ -9,7 +9,7 @@ import io
 import torchvision.models as models
 from scipy.io import wavfile
 import time
-from text import text_to_sequence
+from vits.text import text_to_sequence
 
 
 def is_japanese(string):
