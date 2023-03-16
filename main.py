@@ -18,10 +18,9 @@ import xlwt
 import sys
 from xlutils.copy import copy
 from pypinyin import lazy_pinyin
+from flask import Flask, request
 
 # 记录弹幕上下文到 excel
-
-
 def write_excel_xls_append(value):
     workbook = xlrd.open_workbook(xlslPATH)  # 打开工作簿
     sheets = workbook.sheet_names()  # 获取工作簿中的所有表格
@@ -56,7 +55,7 @@ def write_keyboard_text(text):
         with open(currTXT, 'a', encoding='utf-8') as w:
             w.write(txt)
             w.flush()
-        time.sleep(0.2)
+        time.sleep(0.1)
 
 
 def send2gpt(msg):
@@ -85,6 +84,9 @@ def send2gpt(msg):
         sendVitsMsg = msg['name']+msg['action'] + guardType+'了'
     elif msg['type'] == 'gift':
         sendGptMsg = msg['name']+msg['action'] + msg['msg']
+        sendVitsMsg = sendGptMsg
+    else:
+        sendGptMsg = msg['msg']
         sendVitsMsg = sendGptMsg
 
     # 生成上下文
@@ -297,6 +299,7 @@ class MyHandler(blivedm.BaseHandler):
         scQue.put((999999-message.price+random.random(), queData))
 
 
+
 # 配置文件、当前文本、excel（对话列表数据库）、敏感词文本
 configINI = 'config/config.ini'
 currTXT = 'output/currText.txt'
@@ -341,6 +344,16 @@ giftQue = PriorityQueue(maxsize=5)
 danmuQue = PriorityQueue(maxsize=10)
 topIDs = mainConfig['topid'].split(',')
 
+# api
+app = Flask(__name__)
+
+@app.route('/',methods=['GET'])
+def put():
+    message = request.args.get('text','')
+    queData = {"name": '-1', "type": 'top', 'num': 1,
+                   'action': '', 'msg': message, 'price':0}
+    topQue.put(queData)
+    return '1'
 
 # excel数据库
 if os.path.exists(xlslPATH) == False:
@@ -356,6 +369,7 @@ if __name__ == '__main__':
     _thread.start_new_thread(chatgpt35, ())
     _thread.start_new_thread(asyncio.get_event_loop(
     ).run_until_complete, (run_single_client(),))
+    _thread.start_new_thread(app.run, ("0.0.0.0", 8080))
     print('All subprocesses start.')
     time.sleep(2)
     input('input to exit::\n')
