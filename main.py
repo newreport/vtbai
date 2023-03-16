@@ -20,9 +20,10 @@ from xlutils.copy import copy
 from pypinyin import lazy_pinyin
 
 # 记录弹幕上下文到 excel
+
+
 def write_excel_xls_append(value):
     workbook = xlrd.open_workbook(xlslPATH)  # 打开工作簿
-
     sheets = workbook.sheet_names()  # 获取工作簿中的所有表格
     rows_old = 0
     sheetName = str(datetime.date.today())
@@ -44,7 +45,7 @@ def write_excel_xls_append(value):
     if mainConfig['env'] == 'dev':
         print("xls格式表格【追加】写入数据成功！")
 
-# obs 文本抓取时，模拟 SSE 键盘输入
+# 模拟 SSE 键盘输入，供 obs 抓取字幕
 
 
 def write_keyboard_text(text):
@@ -89,7 +90,7 @@ def send2gpt(msg):
     # 生成上下文
     tempMessage.append({"role": "user", "content": sendGptMsg})
     # 上下文最大值
-    if len(tempMessage) >3:
+    if len(tempMessage) > 3:
         del (tempMessage[0])
     message = baseContext+tempMessage
 
@@ -99,6 +100,7 @@ def send2gpt(msg):
     p.start()
     # join 会阻塞当前 gpt 循环线程，但不会阻塞弹幕线程
     p.join()
+    print("子进程退出")
 
 
 def rec2tts(msg, sendGptMsg, message, sendVitsMsg):
@@ -137,7 +139,8 @@ def rec2tts(msg, sendGptMsg, message, sendVitsMsg):
 
     playsound('output/sendVits.wav')
     # 模拟键盘输入
-    p = multiprocessing.Process(target=write_keyboard_text, args=(responseText,))
+    p = multiprocessing.Process(
+        target=write_keyboard_text, args=(responseText,))
     p.start()
     time.sleep(0.5)
     # 播放接受
@@ -181,8 +184,6 @@ def chatgpt35():
             elif danmuQue.empty() == False:
                 chatObj = danmuQue.get(True, 1)
                 chatObj = chatObj[1]
-            # print(chatObj)
-            # chatObj = chatObj[1]
         except Exception as e:
             print("-----------ErrorStart--------------")
             print(e)
@@ -196,14 +197,13 @@ def chatgpt35():
         if len(chatObj['name']) > 0:
             if filter_text(chatObj['name']) and filter_text(chatObj['msg']):
                 send2gpt(chatObj)
-                print("子进程退出")
         else:
-            time.sleep(1)
+            time.sleep(0.1)
 
 
 # 敏感词音检测
 def filter_text(text):
-    # 为礼物或者舰长时直接过
+    # 为上舰时直接过
     if text == '-1':
         return True
     textPY = str.join('', lazy_pinyin(text))
@@ -230,11 +230,21 @@ class MyHandler(blivedm.BaseHandler):
         if message.dm_type == 0:
             # print(f'弹幕：[{client.room_id}] {message.uname}：{message.msg}')
             # 权重计算
-            privilege_type = message.privilege_type
-            if privilege_type == 0:
-                privilege_type = 9
-            rank = (999999-message.user_level*100+(10-privilege_type)
-                    * 10+message.mobile_verify*10)+random.random()
+            guardLevel = message.privilege_type
+            if guardLevel == 0:
+                guardLevel = 0
+            elif guardLevel == 3:
+                guardLevel = 200
+            elif guardLevel == 2:
+                guardLevel = 2000
+            elif guardLevel == 1:
+                guardLevel = 20000
+            # 舰长权重，勋章id权重*100，lv权重*100
+            medalevel = 0
+            if message.medal_room_id == roomID:
+                medalevel = message.medal_level*100
+            rank = (999999-message.user_level*100 -
+                    guardLevel - medalevel-message.user_level*10+random.random())
             if danmuQue.full():
                 try:
                     danmuQue.get(True, 1)
@@ -269,7 +279,7 @@ class MyHandler(blivedm.BaseHandler):
                 giftQue.get(False, 1)
             if price > 1:
                 queData = {"name": message.uname, "type": 'gift', 'num': message.num,
-                           'action': message.action, 'msg': '-1', 'price': price}
+                           'action': message.action, 'msg': message.gift_name, 'price': price}
                 giftQue.put((999999-price+random.random(), queData), True, 1)
 
     async def _on_buy_guard(self, client: blivedm.BLiveClient, message: blivedm.GuardBuyMessage):
@@ -279,11 +289,12 @@ class MyHandler(blivedm.BaseHandler):
         guardQue.put((message.guard_level+random.random(), queData))
 
     async def _on_super_chat(self, client: blivedm.BLiveClient, message: blivedm.SuperChatMessage):
-        print(f'SC：：[{client.room_id}] 醒目留言 ¥{message.price} {message.uname}：{message.message}')
-            
+        print(
+            f'SC：：[{client.room_id}] 醒目留言 ¥{message.price} {message.uname}：{message.message}')
         # 名称、类型、数量、动作、消息、价格
-        queData={"name": message.uname, "type": 'sc','num': 1, 'action': '发送', 'msg': message.message, 'price': message.price}
-        scQue.put((999999-message.price+random.random(),queData ))
+        queData = {"name": message.uname, "type": 'sc', 'num': 1,
+                   'action': '发送', 'msg': message.message, 'price': message.price}
+        scQue.put((999999-message.price+random.random(), queData))
 
 
 # 配置文件、当前文本、excel（对话列表数据库）、敏感词文本
@@ -305,7 +316,7 @@ openai.api_key = mainConfig['key']
 openai.api_base = mainConfig['proxy_domain']
 baseContext = [{"role": "system", "content": mainConfig['nya1']}]
 contextMessage = []
-tempMessage = [] # 最大3条上下文
+tempMessage = []  # 最大3条上下文
 
 # 敏感词
 sensitiveF = open(sensitiveTXT, 'r', encoding='utf-8')
