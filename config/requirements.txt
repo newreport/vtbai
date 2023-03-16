@@ -1,0 +1,9 @@
+opencc
+openai
+audonnx
+playsound
+xlrd
+xlwt
+xlutils
+torchvision
+asyncio
