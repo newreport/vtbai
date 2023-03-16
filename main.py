@@ -100,6 +100,7 @@ def send2gpt(msg):
     p.start()
     # join 会阻塞当前 gpt 循环线程，但不会阻塞弹幕线程
     p.join()
+    print("子进程退出")
 
 
 def rec2tts(msg, sendGptMsg, message, sendVitsMsg):
@@ -196,9 +197,8 @@ def chatgpt35():
         if len(chatObj['name']) > 0:
             if filter_text(chatObj['name']) and filter_text(chatObj['msg']):
                 send2gpt(chatObj)
-                print("子进程退出")
         else:
-            time.sleep(1)
+            time.sleep(0.1)
 
 
 # 敏感词音检测
