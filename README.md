@@ -12,12 +12,10 @@
 
 >  本直播流程仅在 win 下测试并通过，理论 linux 和 mac 在合适的 py 环境中也能使用，py 版本 3.6 ~ 3.9，不要用 3.10+  
 
->  注：有能者可以同理把老鼠和油管的扩展了，咱本职 C# 和 go，py 线程协程进程鲨我
+>  注：有能者可以同理把老鼠和油管的扩展了，py 线程协程进程鲨我
 
 ## 工作流
 blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 文本转语音）——>vts（语音转口型，快捷键触发表情）
-main.py 为启动文件  
-
 
 ## 性能
 - CPU：5700G
@@ -34,24 +32,64 @@ main.py 为启动文件
 
 # 搭建流程
 请确保您已安装好 conda、obs、vts
-
 ## windows
-windows 请 conda 图形化新建环境，
+> windows 请 conda 图形化新建环境，并用 conda 创建了 python 3.9 环境，launch 了 vscode
+1. clone 项目
+```bash
+git clone https://github.com/newreport/live_vits_chatgpt.git
+cd live_vits_chatgpt
+mkdir models
+mkdir output
+```
+2. 下载 vits 模型和配置
+
+放入 models/
+https://huggingface.co/Mahiruoshi/vits_onnx_model/resolve/main/model.onnx 
+https://huggingface.co/Mahiruoshi/vits_onnx_model/resolve/main/config.json
+
+3. 初始化项目依赖
+```bash
+pip install -r requirements.txt
+git submodule update --init --recursive
+pip install -r blivedm/requirements.txt
+pip install -r MoeGoe/requirements.txt
+
+cp config.ini my_config.ini
+cp sensitive_words.txt my_sensitive_words.txt
+```
+
+4. 替换 jieba 路径
+
+将 MoeGoe/text/mandarin.py 中 
+> jieba.set_dictionary(os.path.dirname(sys.argv[0])+'/jieba/dict.txt')
+
+替换为
+
+> jieba.set_dictionary('MoeGoe/jieba/dict.txt')
+
+5. playsound 删除 utf-16
 
 ## linux
-[安装conda](https://newreport.top/2023-02-28/ubuntu-amd-centos-install-conda/)
+1. [安装conda](https://newreport.top/2023-02-28/ubuntu-amd-centos-install-conda/)
+
+2. 创建环境 clone 项目
+
 ```bash
 conda create -n live python=3.9
 conda activate live
 
 git clone https://github.com/newreport/live_vits_chatgpt.git
 cd live_vits_chatgpt
-bash start.sh
+
 # 去 my_config.ini 里配置好 openai key 和代理
-python main.py
 ```
+3. 运行脚本，替换路径
+```bash
+bash start.sh
+```
+将 MoeGoe/text/mandarin.py 中 
+> jieba.set_dictionary(os.path.dirname(sys.argv[0])+'/jieba/dict.txt')
 
+替换为
 
-# 常见问题
-## playsoud 报错
-windows下需要删除 utf-16
+> jieba.set_dictionary('MoeGoe/jieba/dict.txt')

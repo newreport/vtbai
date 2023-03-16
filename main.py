@@ -15,9 +15,9 @@ import datetime
 from playsound import playsound
 import xlrd
 import xlwt
+import sys
 from xlutils.copy import copy
 from pypinyin import lazy_pinyin
-
 
 # 记录弹幕上下文到 excel
 def write_excel_xls_append(value):
@@ -48,8 +48,6 @@ def write_excel_xls_append(value):
 
 
 def write_keyboard_text(text):
-    if mainConfig['env'] == 'dev':
-        print('vits当前进程id::'+str(os.getpid()))
     with open(currTXT, 'w', encoding='utf-8') as w:
         w.write('')
         w.flush()
@@ -90,7 +88,8 @@ def send2gpt(msg):
 
     # 生成上下文
     tempMessage.append({"role": "user", "content": sendGptMsg})
-    if len(tempMessage) > mainConfig['contentLength']:
+    # 上下文最大值
+    if len(tempMessage) >3:
         del (tempMessage[0])
     message = baseContext+tempMessage
 
@@ -137,10 +136,10 @@ def rec2tts(msg, sendGptMsg, message, sendVitsMsg):
     tts.generated_speech(responseText, 'recVits.wav')
 
     playsound('output/sendVits.wav')
-    time.sleep(0.5)
-
     # 模拟键盘输入
-    write_keyboard_text(responseText)
+    p = multiprocessing.Process(target=write_keyboard_text, args=(responseText,))
+    p.start()
+    time.sleep(0.5)
     # 播放接受
     playsound('output/recVits.wav')
 
@@ -297,6 +296,8 @@ if os.path.exists('config/my_config.ini'):
 if os.path.exists('config/my_sensitive_words.txt'):
     sensitiveTXT = 'config/my_sensitive_words.txt'
 
+con = configparser.ConfigParser()
+con.read(configINI, encoding='utf-8')
 mainConfig = dict(con.items('main'))
 
 # 配置openai
@@ -346,6 +347,6 @@ if __name__ == '__main__':
     ).run_until_complete, (run_single_client(),))
     print('All subprocesses start.')
     time.sleep(2)
-    input('input to exit::')
+    input('input to exit::\n')
     isRun = False
     print('All subprocesses done.')

@@ -9,6 +9,9 @@ import io
 import torchvision.models as models
 from scipy.io import wavfile
 import time
+import os
+import sys
+sys.path.append('MoeGoe')
 from MoeGoe.text import text_to_sequence
 
 
@@ -19,6 +22,7 @@ def is_japanese(string):
         return False 
 def get_args():
     parser = argparse.ArgumentParser(description='inference')
+    parser.add_argument('--jieba',default='./MoeGoe')
     # 模型文件夹
     parser.add_argument('--onnx_model', default = './models/model.onnx')
     # 模型配置
@@ -31,7 +35,6 @@ args = get_args()
 hps = utils.get_hparams_from_file(args.cfg)
 sid = 0
 ort_sess = ort.InferenceSession(args.onnx_model)
-outdir = args.outdir
 
 # 生成语音
 def generated_speech(text,fileName):
@@ -61,11 +64,7 @@ def generated_speech(text,fileName):
         t2 = time.time()
         spending_time = "推理时间："+str(t2-t1)+"s" 
         print(spending_time)
-        bytes_wav = bytes()
-        # byte_io = io.BytesIO(bytes_wav)
         wavfile.write('output/'+fileName,hps.data.sampling_rate, audio.astype(np.int16))
-        # cmd = 'ffmpeg -y -i ' +  outdir + '/temp1.wav' + ' -ar 44100 '+ outdir + '/temp2.wav'
-        # os.system(cmd)
 
 
 if __name__ == '__main__':

@@ -4,8 +4,7 @@ wget -O models/model.onnx  https://huggingface.co/Mahiruoshi/vits_onnx_model/res
 wget -O models/config.json  https://huggingface.co/Mahiruoshi/vits_onnx_model/resolve/main/config.json
 
 pip install -r requirements.txt
-git clone https://github.com/xfgryujk/blivedm.git
-git clone https://github.com/CjangCjengh/MoeGoe.git
+git submodule update --init --recursive
 pip install -r blivedm/requirements.txt
 pip install -r MoeGoe/requirements.txt
 
