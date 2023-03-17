@@ -1,11 +1,11 @@
 # Function in coding ....
-- Azure API TTS
-- Link Character 角色扮演最好的 AI
+- Azure API TTS 
+- Link CharacterAI 角色扮演最好的 AI
 - Multi link 联动
 - ChatGLM-6B 本地1
 - ChatterBot 本地2
 - Twitch & Youtube 平台支持
-
+- Q群：629010988（AI绘画 AI VTB），main暂时不更了，看得懂代码建议拉dev自己调
 # 引用
 
 - [vits](https://github.com/jaywalnut310/vits) vits source
@@ -81,7 +81,8 @@ cp sensitive_words.txt my_sensitive_words.txt
 
 > jieba.set_dictionary('MoeGoe/jieba/dict.txt')
 
-5. playsound 删除 utf-16
+5.win下 playsound 报错
+删除 utf-16
 
 ## linux
 1. [安装conda](https://newreport.top/2023-02-28/ubuntu-amd-centos-install-conda/)
