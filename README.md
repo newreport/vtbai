@@ -1,7 +1,10 @@
-# Coding Function....
+# Function in coding ....
 - Azure API TTS
-- Twitch & Youtube
-- ChatterBot
+- Link Character 角色扮演最好的 AI
+- Multi link 联动
+- ChatGLM-6B 本地1
+- ChatterBot 本地2
+- Twitch & Youtube 平台支持
 
 # 引用
 
@@ -21,7 +24,11 @@
 >  注：有能者可以同理把老鼠和油管的扩展了，py 线程协程进程鲨我
 
 ## 工作流
-blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 文本转语音）——>vts（语音转口型，快捷键触发表情）——>obs(推流)
+blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 文本转语音）——>vts（语音转口型，快捷键触发表情）——>obs(推流)  
+
+## 功能
+- 支持 api 请求，扩展用，比如联动  httt://127.0.0.1:8080?text=你好
+- 支持优先级：api>舰长>礼物>SC>弹幕，礼物和弹幕队列容量默认为5/10，满了自动剔除时间线最后的，SC、舰长没有容量限制
 
 ## 性能
 - CPU：5700G
