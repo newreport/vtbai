@@ -1,3 +1,8 @@
+# Coding Function....
+- Azure API TTS
+- Twitch & Youtube
+- ChatterBot
+
 # 引用
 
 - [vits](https://github.com/jaywalnut310/vits) vits source
