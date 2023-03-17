@@ -1,11 +1,12 @@
 # Function in coding ....
+- Shortcut key with expression
 - Azure API TTS 
 - Link CharacterAI 角色扮演最好的 AI
 - Multi link 联动
 - ChatGLM-6B 本地1
 - ChatterBot 本地2
 - Twitch & Youtube 平台支持
-- Q群：629010988（AI绘画 AI VTB），main暂时不更了，看得懂代码建议拉dev自己调
+- Q群：629010988（AI绘画 AIVTB），main暂时不更了，看得懂代码建议拉dev自己调，等稳定了发个大版，
 # 引用
 
 - [vits](https://github.com/jaywalnut310/vits) vits source
@@ -44,7 +45,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 
 
 # 搭建流程
-请确保您已安装好 conda、obs、vts
+请确保您已安装好 conda、obs、vts、vscode
 ## windows
 > windows 请 conda 图形化新建环境，并用 conda 创建了 python 3.9 环境，launch 了 vscode
 1. clone 项目
