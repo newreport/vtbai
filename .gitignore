@@ -9,7 +9,6 @@ output/
 my_config.ini
 my_sensitive_words.txt
 temp.txt
-MoeGoe/
 # C extensions
 *.so
 

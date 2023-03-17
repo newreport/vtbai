@@ -1,3 +1,6 @@
 [submodule "blivedm"]
 	path = blivedm
 	url = https://github.com/newreport/blivedm.git
+[submodule "MoeGoe"]
+	path = MoeGoe
+	url = https://github.com/newreport/MoeGoe.git
