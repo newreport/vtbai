@@ -6,14 +6,14 @@
 - ChatGLM-6B 本地1
 - ChatterBot 本地2
 - Twitch & Youtube 平台支持
-- Q群：629010988（AI绘画 AIVTB），main暂时不更了，看得懂代码建议拉dev自己调，等稳定了发个大版，
+- Q群：629010988（AI绘画 AIVTB），main暂时不更了，看得懂代码建议拉dev自己调，等稳定了发个大版
 # 引用
 
 - [vits](https://github.com/jaywalnut310/vits) vits source
 - [MoeGoe](https://github.com/CjangCjengh/MoeGoe.git) vits chinese
 - [vits_with_chatgpt-gpt3](https://github.com/Paraworks/vits_with_chatgpt-gpt3) tts 推理参考
 - [blivedm](https://github.com/xfgryujk/blivedm/tree/master) 抓取 b 站直播间信息
-- [演示模型](https://huggingface.co/Mahiruoshi/vits_onnx_model/tree/main) vits model
+- [演示模型](https://huggingface.co/Mahiruoshi/vits_onnx_model/tree/main) vits model (商用请自炼自然人同意的合法声源或用 Azure)
 
 # 架构
 > 从哔哩哔哩直播间抓取弹幕和礼物，接收后发送给 openai 官方的 chatgpt，等待 gpt 回调消息后使用 vits 进行 tts 推理，然后根据关键字触发 vts 的表情快捷键和 playsound 播放语音， 播放时 vts 根据声音匹配口型  
@@ -50,8 +50,8 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 > windows 请 conda 图形化新建环境，并用 conda 创建了 python 3.9 环境，launch 了 vscode
 1. clone 项目
 ```bash
-git clone https://github.com/newreport/live_vits_chatgpt.git
-cd live_vits_chatgpt
+git clone https://github.com/newreport/live_tts_chatgpt.git
+cd live_tts_chatgpt
 mkdir models
 mkdir output
 ```
