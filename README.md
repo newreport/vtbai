@@ -1,10 +1,19 @@
+# Function in coding ....
+- Shortcut key with expression
+- Azure API TTS 
+- Link CharacterAI 角色扮演最好的 AI
+- Multi link 联动
+- ChatGLM-6B 本地1
+- ChatterBot 本地2
+- Twitch & Youtube 平台支持
+- Q群：629010988（AI绘画 AIVTB），main暂时不更了，看得懂代码建议拉dev自己调，等稳定了发个大版
 # 引用
 
 - [vits](https://github.com/jaywalnut310/vits) vits source
 - [MoeGoe](https://github.com/CjangCjengh/MoeGoe.git) vits chinese
 - [vits_with_chatgpt-gpt3](https://github.com/Paraworks/vits_with_chatgpt-gpt3) tts 推理参考
 - [blivedm](https://github.com/xfgryujk/blivedm/tree/master) 抓取 b 站直播间信息
-- [演示模型](https://huggingface.co/Mahiruoshi/vits_onnx_model/tree/main) vits model
+- [演示模型](https://huggingface.co/Mahiruoshi/vits_onnx_model/tree/main) vits model (商用请自炼自然人同意的合法声源或用 Azure)
 
 # 架构
 > 从哔哩哔哩直播间抓取弹幕和礼物，接收后发送给 openai 官方的 chatgpt，等待 gpt 回调消息后使用 vits 进行 tts 推理，然后根据关键字触发 vts 的表情快捷键和 playsound 播放语音， 播放时 vts 根据声音匹配口型  
@@ -16,7 +25,11 @@
 >  注：有能者可以同理把老鼠和油管的扩展了，py 线程协程进程鲨我
 
 ## 工作流
-blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 文本转语音）——>vts（语音转口型，快捷键触发表情）——>obs(推流)
+blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 文本转语音）——>vts（语音转口型，快捷键触发表情）——>obs(推流)  
+
+## 功能
+- 支持 api 请求，扩展用，比如联动  httt://127.0.0.1:8080?text=你好
+- 支持优先级：api>舰长>礼物>SC>弹幕，礼物和弹幕队列容量默认为5/10，满了自动剔除时间线最后的，SC、舰长没有容量限制
 
 ## 性能
 - CPU：5700G
@@ -32,13 +45,13 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 
 
 # 搭建流程
-请确保您已安装好 conda、obs、vts
+请确保您已安装好 conda、obs、vts、vscode
 ## windows
 > windows 请 conda 图形化新建环境，并用 conda 创建了 python 3.9 环境，launch 了 vscode
 1. clone 项目
 ```bash
-git clone https://github.com/newreport/live_vits_chatgpt.git
-cd live_vits_chatgpt
+git clone https://github.com/newreport/live_tts_chatgpt.git
+cd live_tts_chatgpt
 mkdir models
 mkdir output
 ```
@@ -69,7 +82,8 @@ cp sensitive_words.txt my_sensitive_words.txt
 
 > jieba.set_dictionary('MoeGoe/jieba/dict.txt')
 
-5. playsound 删除 utf-16
+5.win下 playsound 报错
+删除 utf-16
 
 ## linux
 1. [安装conda](https://newreport.top/2023-02-28/ubuntu-amd-centos-install-conda/)
