@@ -6,7 +6,7 @@
 - ChatGLM-6B 本地1
 - ChatterBot 本地2
 - Twitch & Youtube 平台支持
-- Q群：629010988（AI绘画 AIVTB），main暂时不更了，看得懂代码建议拉dev自己调，等稳定了发个大版
+- main暂时不更了，看得懂代码建议拉dev自己调，等稳定了发个大版
 # 引用
 
 - [vits](https://github.com/jaywalnut310/vits) vits source
@@ -73,16 +73,7 @@ cp config.ini my_config.ini
 cp sensitive_words.txt my_sensitive_words.txt
 ```
 
-4. 替换 jieba 路径
-
-将 MoeGoe/text/mandarin.py 中 
-> jieba.set_dictionary(os.path.dirname(sys.argv[0])+'/jieba/dict.txst')
-
-替换为
-
-> jieba.set_dictionary('MoeGoe/jieba/dict.txt')
-
-5.win下 playsound 报错
+4.win下 playsound 报错
 删除 utf-16
 
 ## linux
@@ -99,13 +90,3 @@ cd live_vits_chatgpt
 
 # 去 my_config.ini 里配置好 openai key 和代理
 ```
-3. 运行脚本，替换路径
-```bash
-bash start.sh
-```
-将 MoeGoe/text/mandarin.py 中 
-> jieba.set_dictionary(os.path.dirname(sys.argv[0])+'/jieba/dict.txt')
-
-替换为
-
-> jieba.set_dictionary('MoeGoe/jieba/dict.txt')
