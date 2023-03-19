@@ -69,13 +69,14 @@ git submodule update --init --recursive
 pip install -r blivedm/requirements.txt
 pip install -r MoeGoe/requirements.txt
 
-cp config.ini my_config.ini
-cp sensitive_words.txt my_sensitive_words.txt
+cp config/config.ini config/my_config.ini
+cp config/sensitive_words.txt config/my_sensitive_words.txt
 ```
 
 4.win下 playsound 报错
-删除 utf-16
-
+> command = ' '.join(command).encode('utf-16')
+改为
+> command = ' '.join(command)
 ## linux
 1. [安装conda](https://newreport.top/2023-02-28/ubuntu-amd-centos-install-conda/)
 

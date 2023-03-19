@@ -4,8 +4,8 @@ __pycache__/
 *$py.class
 
 # User
-models/
-output/
+models/*
+output/*
 my_config.ini
 my_sensitive_words.txt
 temp.txt
