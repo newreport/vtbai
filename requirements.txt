@@ -1,0 +1,6 @@
+openai
+torchvision
+playsound
+xlrd
+xlwt
+xlutils
