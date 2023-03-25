@@ -6,7 +6,7 @@
 - ChatGLM-6B 本地1
 - ChatterBot 本地2
 - Twitch & Youtube 平台支持
-- main暂时不更了，看得懂代码建议拉dev自己调，等稳定了发个大版
+- main暂时不更了，python 联动性太差，下版本换 C#
 # 引用
 
 - [vits](https://github.com/jaywalnut310/vits) vits source
