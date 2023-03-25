@@ -50,7 +50,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 > windows 请 conda 图形化新建环境，并用 conda 创建了 python 3.9 环境，launch 了 vscode
 1. clone 项目
 ```bash
-git clone https://github.com/newreport/live_tts_chatgpt.git
+git clone -b 1.0-py https://github.com/newreport/live_tts_chatgpt.git
 cd live_tts_chatgpt
 mkdir models
 mkdir output
