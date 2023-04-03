@@ -1,28 +1,51 @@
+import os
 import openai
 import asyncio
 import _thread
 import random
 import blivedm.blivedm as blivedm
 import configparser
+import uuid
 from queue import Queue, PriorityQueue
 import json
 import time
 import requests
 import os
 import multiprocessing
-import tts
 import datetime
-from playsound import playsound
 import xlrd
 import xlwt
 import sys
 from xlutils.copy import copy
 from pypinyin import lazy_pinyin
 from flask import Flask, request
+import tts
 
-# 记录弹幕上下文到 excel
+# 配置文件、当前文本、excel（对话列表数据库）、敏感词文本
+configINI = 'config/config.ini'
+currTXT = 'output/currText.txt'
+xlslPATH = 'output/record.xlsx'
+sensitiveTXT = 'config/sensitive_words.txt'
+if os.path.exists('config/my_config.ini'):
+    configINI = 'config/my_config.ini'
+if os.path.exists('config/my_sensitive_words.txt'):
+    sensitiveTXT = 'config/my_sensitive_words.txt'
+con = configparser.ConfigParser()
+con.read(configINI, encoding='utf-8')
+mainConfig = dict(con.items('main'))
+queueConfig = dict(con.items('queue'))
+biliConfig = dict(con.items('bili'))
+openaiConfig = dict(con.items('openai'))
+ttsConfig = dict(con.items('tts'))
 
 
+# excel数据库
+if os.path.exists(xlslPATH) == False:
+    workbook = xlwt.Workbook()
+    sheet = workbook.add_sheet("test")  # 在工作簿中新建一个表格
+    workbook.save(xlslPATH)
+    print("xls格式表格初始化成功！")
+    print('当前进程id::' + str(os.getpid()))
 def write_excel_xls_append(value):
     workbook = xlrd.open_workbook(xlslPATH)  # 打开工作簿
     sheets = workbook.sheet_names()  # 获取工作簿中的所有表格
@@ -47,23 +70,59 @@ def write_excel_xls_append(value):
         print("xls格式表格【追加】写入数据成功！")
 
 # 模拟 SSE 键盘输入，供 obs 抓取字幕
-
-
-def write_keyboard_text(text):
-    with open(currTXT, 'w', encoding='utf-8') as w:
-        w.write('')
-        w.flush()
+async def write_keyboard_text(currTXT,text):
+    currTXT=''
     for txt in text:
-        with open(currTXT, 'a', encoding='utf-8') as w:
-            w.write(txt)
-            w.flush()
-        time.sleep(0.1)
+        currTXT = currTXT + txt
+        await asyncio.sleep(ttsConfig)
 
+
+# 配置openai
+openai.api_key = openaiConfig['key']
+openai.api_base = openaiConfig['proxy_domain']
+baseContext = [{"role": "system", "content": openaiConfig['nya1']}]
+contextMessage = []
+tempMessage = []
+async def chatgpt():
+    print("运行gpt循环任务")
+    while True:
+        chatObj = {"name": '', "type": '', 'num': 0,
+                   'action': '', 'msg': '', 'price': 0}
+        # 从队列获取信息
+        try:
+            if topQue.empty() == False:
+                chatObj = topQue.get(True, 1)
+            elif guardQue.empty() == False:
+                chatObj = guardQue.get(True, 1)
+                chatObj = chatObj[1]
+            elif giftQue.empty() == False:
+                chatObj = giftQue.get(True, 1)
+                chatObj = chatObj[1]
+            elif scQue.empty() == False:
+                chatObj = scQue.get(True, 1)
+                chatObj = chatObj[1]
+            elif danmuQue.empty() == False:
+                chatObj = danmuQue.get(True, 1)
+                chatObj = chatObj[1]
+        except Exception as e:
+            print("-----------ErrorStart--------------")
+            print(e)
+            print("gpt获取弹幕异常，当前线程：：")
+            print(chatObj)
+            print("-----------ErrorEnd--------------")
+            time.sleep(2)
+            continue
+        # print(chatObj)
+        # 过滤队列
+        if len(chatObj['name']) > 0:
+            if filter_text(chatObj['name']) and filter_text(chatObj['msg']):
+                send2gpt(chatObj)
+        else:
+            await asyncio.sleep(5)
 
 def send2gpt(msg):
     if mainConfig['env'] == 'dev':
         print('gpt当前进程id::' + str(os.getpid()))
-
     # 向 gpt 发送的消息
     sendGptMsg = ''
     # 向 tts 写入的数据
@@ -100,14 +159,14 @@ def send2gpt(msg):
 
     # 开启 openai 和 tts 进程
     p = multiprocessing.Process(target=rec2tts, args=(
-        msg, sendGptMsg, message, sendVitsMsg))
+        msg, sendGptMsg, message, sendVitsMsg,ttsQue,ttsConfig))
     p.start()
     # join 会阻塞当前 gpt 循环线程，但不会阻塞弹幕线程
-    p.join()
+    if ttsQue.full():
+        p.join()
     print("子进程退出")
 
-
-def rec2tts(msg, sendGptMsg, message, sendVitsMsg):
+def rec2tts(msg, sendGptMsg, message, sendVitsMsg,ttsQue,ttsConfig):
     print("进入gtp&&tts进程，向gpt发送::" + sendGptMsg)
 
     # 对话日志写入 excel
@@ -126,29 +185,24 @@ def rec2tts(msg, sendGptMsg, message, sendVitsMsg):
 
     # 发送并收
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo", messages=message)
+        model=openaiConfig['model'], messages=message)
     responseText = str(response['choices'][0]['message']['content'])
 
     # 敏感词词音过滤
     if filter_text(responseText) == False:
         print("检测到敏感词内容::" + responseText)
         return
-
     print("从gpt接收::" + responseText)
 
+    wavName =  uuid.uuid1()
+    ttsQue.put(wavName)
     # 生成发送语音
-    tts.generated_speech(sendVitsMsg, 'sendVits.wav')
+    tts.generated_speech(sendVitsMsg,wavName+ 'Send.wav',ttsConfig)
     # 生成接收语音
-    tts.generated_speech(responseText, 'recVits.wav')
+    tts.generated_speech(responseText, wavName+'Rec.wav',ttsConfig)
 
-    playsound('output/sendVits.wav')
-    # 模拟键盘输入
-    p = multiprocessing.Process(
-        target=write_keyboard_text, args=(responseText,))
-    p.start()
-    time.sleep(0.5)
-    # 播放接受
-    playsound('output/recVits.wav')
+
+
 
     # 对话日志
     with open('output/' + str(datetime.date.today()) + '.txt', 'a', encoding='utf-8') as a:
@@ -164,47 +218,16 @@ def rec2tts(msg, sendGptMsg, message, sendVitsMsg):
             'price': 0
         })
 
-# 监控队列的循环任务
 
 
-def chatgpt35():
-    print("运行gpt循环任务")
-    while True:
-        chatObj = {"name": '', "type": '', 'num': 0,
-                   'action': '', 'msg': '', 'price': 0}
-        # 从队列获取信息
-        try:
-            if topQue.empty() == False:
-                chatObj = topQue.get(True, 1)
-            elif guardQue.empty() == False:
-                chatObj = guardQue.get(True, 1)
-                chatObj = chatObj[1]
-            elif giftQue.empty() == False:
-                chatObj = giftQue.get(True, 1)
-                chatObj = chatObj[1]
-            elif scQue.empty() == False:
-                chatObj = scQue.get(True, 1)
-                chatObj = chatObj[1]
-            elif danmuQue.empty() == False:
-                chatObj = danmuQue.get(True, 1)
-                chatObj = chatObj[1]
-        except Exception as e:
-            print("-----------ErrorStart--------------")
-            print(e)
-            print("gpt获取弹幕异常，当前线程：：")
-            print(chatObj)
-            print("-----------ErrorEnd--------------")
-            time.sleep(2)
-            continue
-        # print(chatObj)
-        # 过滤队列
-        if len(chatObj['name']) > 0:
-            if filter_text(chatObj['name']) and filter_text(chatObj['msg']):
-                send2gpt(chatObj)
-        else:
-            time.sleep(0.1)
 
-
+# 敏感词
+sensitiveF = open(sensitiveTXT, 'r', encoding='utf-8')
+hzSensitiveWord = sensitiveF.readlines()
+pySensitiveWord = []
+for i in range(len(hzSensitiveWord)):
+    hzSensitiveWord[i] = hzSensitiveWord[i].replace('\n', '')
+    pySensitiveWord.append(str.join('', lazy_pinyin(hzSensitiveWord[i])))
 # 敏感词音检测
 def filter_text(text):
     # 为上舰时直接过
@@ -217,9 +240,28 @@ def filter_text(text):
     return True
 
 
+# tts 
+ttsQue = Queue(maxsize=ttsConfig['max_wav_count'])
+
+# bilibili
+# 获取真实房间号
+roomID = json.loads(str(requests.get('https://api.live.bilibili.com/room/v1/Room/get_info?room_id=' +
+                                     biliConfig['roomid']).content, encoding="utf-8"))['data']['room_id']
+# 最优先队列、sc、礼物、弹幕队列
+topQue = Queue(maxsize=0)
+# sc 队列
+scQue = PriorityQueue(maxsize=0)
+# 舰长队列
+guardQue = PriorityQueue(maxsize=0)
+# 礼物
+giftQue = PriorityQueue(maxsize=5)
+# 普通弹幕队列
+danmuQue = PriorityQueue(maxsize=10)
+topIDs = biliConfig['topid'].split(',')
 async def run_single_client():
     # 如果SSL验证失败就把ssl设为False，B站真的有过忘续证书的情况
     client = blivedm.BLiveClient(roomID, ssl=True)
+    print(roomID)
     handler = MyHandler()
     client.add_handler(handler)
     client.start()
@@ -227,9 +269,11 @@ async def run_single_client():
         await client.join()
     finally:
         await client.stop_and_close()
-
-
+        
 class MyHandler(blivedm.BaseHandler):
+    async def _on_heartbeat(self, client: blivedm.BLiveClient, message: blivedm.HeartbeatMessage):
+        print(f'[{client.room_id}] 当前人气值：{message.popularity}')
+
     async def _on_danmaku(self, client: blivedm.BLiveClient, message: blivedm.DanmakuMessage):
         if message.dm_type == 0:
             # print(f'弹幕：[{client.room_id}] {message.uname}：{message.msg}')
@@ -254,7 +298,7 @@ class MyHandler(blivedm.BaseHandler):
                     danmuQue.get(True, 1)
                 except BaseException:
                     print("on_danmuku时，get异常")
-
+            
             queData = {'name': message.uname, 'type': 'danmu', 'num': 1, 'action': '说',
                        'msg': message.msg.replace('[', '').replace(']', ''), 'price': 0}
             if mainConfig['env'] == 'dev':
@@ -273,7 +317,7 @@ class MyHandler(blivedm.BaseHandler):
                 print("错误" + str(danmuQue.empty()))
                 print("后弹幕队列容量：" + str(danmuQue.qsize()))
                 print("ErrorEnd-------------------------")
-
+            
     async def _on_gift(self, client: blivedm.BLiveClient, message: blivedm.GiftMessage):
         if message.coin_type == 'gold':
             print(f'礼物：：[{client.room_id}] {message.uname} 赠送{message.gift_name}x{message.num}'
@@ -302,83 +346,37 @@ class MyHandler(blivedm.BaseHandler):
         scQue.put((999999 - message.price + random.random(), queData))
 
 
-# 配置文件、当前文本、excel（对话列表数据库）、敏感词文本
-configINI = 'config/config.ini'
-currTXT = 'output/currText.txt'
-xlslPATH = 'output/record.xlsx'
-sensitiveTXT = 'config/sensitive_words.txt'
-if os.path.exists('config/my_config.ini'):
-    configINI = 'config/my_config.ini'
-if os.path.exists('config/my_sensitive_words.txt'):
-    sensitiveTXT = 'config/my_sensitive_words.txt'
-
-con = configparser.ConfigParser()
-con.read(configINI, encoding='utf-8')
-
-mainConfig = dict(con.items('main'))
-queueConfig = dict(con.items('queue'))
-biliConfig = dict(con.items('bili'))
-openaiConfig = dict(con.items('openai'))
-ttsConfig = dict(con.items('tts'))
-
-# 配置openai
-openai.api_key = mainConfig['key']
-openai.api_base = mainConfig['proxy_domain']
-baseContext = [{"role": "system", "content": mainConfig['nya1']}]
-contextMessage = []
-tempMessage = []  # 最大3条上下文
-
-# 敏感词
-sensitiveF = open(sensitiveTXT, 'r', encoding='utf-8')
-hzSensitiveWord = sensitiveF.readlines()
-pySensitiveWord = []
-for i in range(len(hzSensitiveWord)):
-    hzSensitiveWord[i] = hzSensitiveWord[i].replace('\n', '')
-    pySensitiveWord.append(str.join('', lazy_pinyin(hzSensitiveWord[i])))
-
-# bilibili
-roomID = json.loads(str(requests.get('https://api.live.bilibili.com/room/v1/Room/get_info?room_id=' +
-                                     mainConfig['roomid']).content, encoding="utf-8"))['data']['room_id']
-# 最优先队列、sc、礼物、弹幕队列
-topQue = Queue(maxsize=0)
-# sc 队列
-scQue = PriorityQueue(maxsize=0)
-# 舰长队列
-guardQue = PriorityQueue(maxsize=0)
-# 礼物
-giftQue = PriorityQueue(maxsize=5)
-# 普通弹幕队列
-danmuQue = PriorityQueue(maxsize=10)
-topIDs = mainConfig['topid'].split(',')
-
 # api
 app = Flask(__name__)
+currTXT
 @app.route('/', methods=['GET'])
-def put():
+def putQueue():
     message = request.args.get('text', '')
     queData = {"name": '-1', "type": 'top', 'num': 1,
                'action': '', 'msg': message, 'price': 0}
     topQue.put(queData)
     return '1'
+@app.route('/subtitle', methods=['GET'])
+def subtitle():
+    return currTXT
 
-
-# excel数据库
-if os.path.exists(xlslPATH) == False:
-    workbook = xlwt.Workbook()
-    sheet = workbook.add_sheet("test")  # 在工作簿中新建一个表格
-    workbook.save(xlslPATH)
-    print("xls格式表格初始化成功！")
-    print('当前进程id::' + str(os.getpid()))
 
 
 if __name__ == '__main__':
     isRun = True
-    _thread.start_new_thread(chatgpt35, ())
-    _thread.start_new_thread(asyncio.get_event_loop(
-    ).run_until_complete, (run_single_client(),))
-    _thread.start_new_thread(app.run, ("0.0.0.0", 8080))
+    # chatgpt
+    _thread.start_new_thread(chatgpt, ())
+    # bilibili
+    _thread.start_new_thread(asyncio.run,(run_single_client(),))
+    # api
+    _thread.start_new_thread(app.run, ("0.0.0.0", 3939))
+    # playsound
+    p = multiprocessing.Process(target=tts.play, args=(isRun,ttsQue,ttsConfig,currTXT))
+    p.start()
+
     print('All subprocesses start.')
     time.sleep(2)
     input('input to exit::\n')
+
     isRun = False
     print('All subprocesses done.')
