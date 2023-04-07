@@ -2,7 +2,7 @@ import os
 import urllib.request as urllib2
 from shutil import copyfile
 
-dirs = ['models','output']
+dirs = ['models','output','output/wav']
 
 for dir in dirs:
     if not os.path.exists(dir):
