@@ -54,10 +54,7 @@ cd live_tts_chatgpt
 start.bat
 # config\my_config.ini 填写房间号和 openai key
 python main.py
+# 弹幕，将 resource 中的 hmtl 拖到 obs 里
 ```
-win下 playsound 报错，找到 playsound 报错源文件
-> command = ' '.join(command).encode('utf-16')
-改为
-> command = ' '.join(command)
 
 ![Star History Chart](https://api.star-history.com/svg?repos=newreport/live_tts_chatgpt&type=Date)]
