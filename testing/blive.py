@@ -2,7 +2,10 @@
 import asyncio
 import random
 from queue import Queue, PriorityQueue
-import blivedm
+import sys
+sys.path.append('../')
+import blivedm.blivedm as blivedm
+
 
 # 直播间ID的取值看直播间URL
 TEST_ROOM_IDS = [
@@ -77,5 +80,8 @@ class MyHandler(blivedm.BaseHandler):
                   'num': 1, 'action': '发送', 'msg': message.message, 'price': message.price}))
 
 
+
+
+      
 if __name__ == '__main__':
-    asyncio.get_event_loop().run_until_complete(main())
+     asyncio.run(main())
