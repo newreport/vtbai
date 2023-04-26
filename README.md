@@ -49,7 +49,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 请确保您已安装好 [conda](https://newreport.top/2023-02-27/ubuntu-amd-centos-install-conda/)、[obs](https://obsproject.com/)、[vts](https://denchisoft.com/)、[vscode](https://code.visualstudio.com/)
 > 请用 conda 新建 python 3.10 环境，launch 了 vscode
 ```bash
-git clone  https://github.com/newreport/live_tts_chatgpt.git
+git clone  https://github.com/newreport/vtbai.git
 cd live_tts_chatgpt
 start.bat
 # config\my_config.ini 填写房间号和 openai key
