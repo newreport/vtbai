@@ -115,6 +115,7 @@ async def chatgpt(is_run):
             await asyncio.sleep(1)
 
 def send2gpt(msg):
+    
     if main_config['env'] == 'dev':
         print('gpt当前进程id::' + str(os.getpid()))
     # 向 gpt 发送的消息
@@ -153,13 +154,14 @@ def send2gpt(msg):
 
     # 子进程4
     # 开启 openai 进程
-    p = multiprocessing.Process(target=rec2tts, args=(
-        msg, send_gpt_msg, message, send_vits_msg,tts_que,tts_config))
-    p.start()
-    # join 会阻塞当前 gpt 循环线程，但不会阻塞弹幕线程
-    print("openai请求子进程开启完成")
-    if tts_que.full():
-        p.join()
+    if tts_que.full() == False:
+        p = multiprocessing.Process(target=rec2tts, args=(
+            msg, send_gpt_msg, message, send_vits_msg,tts_que,tts_config))
+        p.start()
+        # join 会阻塞当前 gpt 循环线程，但不会阻塞弹幕线程
+        print("openai请求子进程开启完成")
+        if tts_que.full():
+            p.join()
 
 def rec2tts(msg, send_gpt_msg, message, send_vits_msg,tts_que,tts_config):
     print("进入openai chatgpt进程，向gpt发送::" + send_gpt_msg)
