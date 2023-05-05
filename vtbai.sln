@@ -3,23 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vtbai", "vtbai\vtbai.csproj", "{50B745BE-D6BC-47D2-8E04-644C0EFE9459}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vtbai", "vtbai\vtbai.csproj", "{50B745BE-D6BC-47D2-8E04-644C0EFE9459}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonHelper", "CommonHelper\CommonHelper.csproj", "{B7D9D0C7-22D8-4409-9943-BC31ACD9C7C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonHelper", "CommonHelper\CommonHelper.csproj", "{B7D9D0C7-22D8-4409-9943-BC31ACD9C7C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPT", "GPT\GPT.csproj", "{B21F037B-ED6D-4BD6-ABAC-26472595DF49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GPT", "GPT\GPT.csproj", "{B21F037B-ED6D-4BD6-ABAC-26472595DF49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTS", "TTS\TTS.csproj", "{CB366FF5-D39E-49A2-8089-9D1D960B0677}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTS", "TTS\TTS.csproj", "{CB366FF5-D39E-49A2-8089-9D1D960B0677}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module 组件", "Module 组件", "{13CF3C56-6F92-4B31-B75B-39850743A2D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{2B0BB0A3-2C79-4D05-9524-7AEF232B9648}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{2B0BB0A3-2C79-4D05-9524-7AEF232B9648}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Live", "Live\Live.csproj", "{7F4CDABC-CB01-46B7-B788-CC1A949F1154}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Live", "Live\Live.csproj", "{7F4CDABC-CB01-46B7-B788-CC1A949F1154}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfuseCore", "ConfuseCore\ConfuseCore.csproj", "{F9D83686-D448-4A99-AEFD-DB925E032430}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfuseCore", "ConfuseCore\ConfuseCore.csproj", "{F9D83686-D448-4A99-AEFD-DB925E032430}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIGC", "AIGC\AIGC.csproj", "{824422F6-74F6-47F3-9E36-87FBD0D08344}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AIGC", "AIGC\AIGC.csproj", "{824422F6-74F6-47F3-9E36-87FBD0D08344}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{994949A9-3352-48FE-B95D-B972CF8A8844}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{824422F6-74F6-47F3-9E36-87FBD0D08344}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{824422F6-74F6-47F3-9E36-87FBD0D08344}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{824422F6-74F6-47F3-9E36-87FBD0D08344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{994949A9-3352-48FE-B95D-B972CF8A8844}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{994949A9-3352-48FE-B95D-B972CF8A8844}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{994949A9-3352-48FE-B95D-B972CF8A8844}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{994949A9-3352-48FE-B95D-B972CF8A8844}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

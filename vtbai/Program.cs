@@ -3,11 +3,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Model;
 using static Model.ConfigModel;
 
 Console.Title = "live_tts_chatgpt";
 FileHelper.CreatePath("data/models");
 FileHelper.CreatePath("data/output");
+
+ConfigModel configModel = new ConfigModel();
 #endregion
 
 #region api conifg
@@ -49,7 +52,7 @@ app.UseAuthorization();
 app.MapControllers();
 #endregion
 
-app.MapGet("/test", () => "ok::"+DateTime.Now);
+app.MapGet("/test", () => "ok::" + DateTime.Now);
 
 
 app.Run();

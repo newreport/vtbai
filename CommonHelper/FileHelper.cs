@@ -32,5 +32,16 @@ namespace CommonHelper
         }
 
 
+        public static string[] ReadAllLines(string fileName)
+        {
+            return File.ReadAllLines(fileName);
+        }
+
+        public static string ReadAllText(string fileName)
+        {
+            return File.ReadAllText(fileName);
+        }
+
+
     }
 }
