@@ -1,4 +1,6 @@
-﻿namespace CommonHelper
+﻿using System.IO;
+
+namespace CommonHelper
 {
     public class FileHelper
     {
@@ -7,6 +9,10 @@
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
+            }
+            else
+            {
+                Console.WriteLine("Path already exists::" + path);
             }
         }
 
@@ -18,7 +24,13 @@
                 {
                 }
             }
+            else
+            {
+                Console.WriteLine("File already exists::" + fileName);
+            }
             return true;
         }
+
+
     }
 }

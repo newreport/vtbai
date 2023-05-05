@@ -14,7 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="resource\" />
+    <Folder Include="data\output\" />
+    <Folder Include="data\models\" />
   </ItemGroup>
 
   <ItemGroup>
