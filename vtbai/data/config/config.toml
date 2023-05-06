@@ -2,16 +2,12 @@
 env = "dev"
 # api 监听端口
 api_listen = "http://0.0.0.0:3939"
-# 直播平台 bili | douyin
-live_platform = "bili"
-# gpt 平台 openai | glm6b
-gpt_platform = "openai"
-# tts 模式 moegoe | azure
-tts_platform = "moegoe"
 
 
 # 直播间配置
 [live]
+# 直播平台 bili | douyin
+platform = "bili"
     [live.bili]
     # 房间id，可为短号
     roomid = "207640"
@@ -24,6 +20,8 @@ tts_platform = "moegoe"
 
 # gpt 配置
 [gpt]
+# gpt 平台 openai | glm6b | other
+platform = "openai"
     [gpt.openai]
     # openai key
     key = "***your key***"
@@ -38,9 +36,17 @@ tts_platform = "moegoe"
 
     [gpt.glm6b]
 
+    [gpt.other]
+    # 转发接口，仅 get 请求
+    transmit_url = "127.0.0.1:4040"
+    # 问题参数名称
+    q_name = "q"
+
 
 # 文本转语音配置
 [tts]
+# tts 模式 moegoe | azure
+platform = "moegoe"
 # 文本显示时最大断句
 max_text_length = 50
 # 语音最大断句
@@ -64,4 +70,11 @@ auto_del_wav = 0
     noise_scale = 0.667
     # 噪声偏差，以控制音速长短，噪声的标准差缩放因子的偏差值。默认值为 0.8。
     noise_scale_w = 0.8
-    
+
+
+[l2d]
+# vts | prpr
+platform = "vts"
+
+
+[aigc]
