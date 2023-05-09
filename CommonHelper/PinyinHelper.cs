@@ -7,7 +7,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace CommonHelper
 {
-    public class PinyinHelper
+    public static class PinyinHelper
     {
 
         /// <summary>
@@ -21,9 +21,15 @@ namespace CommonHelper
             return TinyPinyin.PinyinHelper.GetPinyin(hans, "");
         }
 
+        /// <summary>
+        /// 是否汉字
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
         public static bool IsChinese(char c)
         {
             return TinyPinyin.PinyinHelper.IsChinese(c);
         }
+
     }
 }

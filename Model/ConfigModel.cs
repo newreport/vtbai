@@ -1,42 +1,39 @@
 ﻿
+using Microsoft.VisualBasic;
+using System.Runtime.Serialization;
+using System.Xml.Linq;
+using Tomlyn;
+
 namespace Model
 {
-    public class ConfigModel
+    public  class ConfigModel
     {
+
         private const string ConfigPath = "data/config/config.toml";
 
         private const string SensitivePath = "data/config/sensitive_words.txt";
 
-        public ConfigModel()
+
+        public static ConfigModel ConfigToml = Toml.ToModel<ConfigModel>(FileHelper.ReadAllText(ConfigPath));
+
+        public static List<string> SensitiveWords { get; private set; }
+        public static List<string> SensitiveWordsPY { get; private set; }
+
+
+        public string Env { get; set; }
+
+        public string ApiListen { get; set; }
+
+
+        public static ConfigModel NewM()
         {
-            SensitiveWords = FileHelper.ReadAllLines(SensitivePath).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
-            SensitiveWordsPY = new List<string>();
-            foreach (var s in SensitiveWords)
-            {
-                SensitiveWordsPY.Add(PinyinHelper.Hanzi2Pinyin(s));
-            }
+            string str = FileHelper.ReadAllText(ConfigPath);
+            return Toml.ToModel<ConfigModel>(str);
         }
-        public static VtbaiConfig VTBAIConfig { get; private set; } = new();
 
-        public static LiveConfig LIVEConfig { get; private set; } = new();
-
-        public static GptConfig GPTConfig { get; private set; } = new();
-
-        public static TtsConfig TTSConfig { get; private set; } = new();
-
-
-        public static List<string> SensitiveWords { get; private set; } = new();
-        public static List<string> SensitiveWordsPY { get; private set; } = new();
-
-
-
-
-        public void RefreshConfig()
+        public static void RefreshConfig()
         {
-            VTBAIConfig = new();
-            LIVEConfig = new();
-            GPTConfig = new();
-            TTSConfig = new();
+            ConfigToml = Toml.ToModel<ConfigModel>(FileHelper.ReadAllText(ConfigPath));
             SensitiveWords = FileHelper.ReadAllLines(SensitivePath).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
             SensitiveWordsPY = new List<string>();
             foreach (var s in SensitiveWords)
@@ -45,116 +42,110 @@ namespace Model
             }
         }
 
+        public  LiveConf Live { get; set; }
 
+        public  GptConf Gpt { get; set; }
 
-        public class VtbaiConfig
+        public TtsConf Tts { get; set; }
+
+        public L2ddConf L2d { get; set; }
+
+        public AigcConf Aigc { get;set; }
+
+        public class LiveConf
         {
+            public  BiliConf Bili { get;  set; }
+            public  DouyinConf Douyin { get;  set; }
 
-            public VtbaiConfig()
+            public string Platform { get;  set; }
+
+            public class BiliConf
             {
-                Env = INIHelper.Read("vtbai", "env", "dev", ConfigModel.ConfigPath);
-                ApiListen = INIHelper.Read("vtbai", "env", "dev", ConfigModel.ConfigPath);
-                LivePlatform = INIHelper.Read("vtbai", "env", "dev", ConfigModel.ConfigPath);
-                GptPlatform = INIHelper.Read("vtbai", "env", "dev", ConfigModel.ConfigPath);
-                TtsPlatform = INIHelper.Read("vtbai", "env", "dev", ConfigModel.ConfigPath);
-            }
-
-            public string Env { get; private set; }
-            /// <summary>
-            /// 监听端口
-            /// </summary>
-            public string ApiListen { get; private set; }
-            /// <summary>
-            /// 直播平台
-            /// </summary>
-            public string LivePlatform { get; private set; }
-            /// <summary>
-            /// GPT 平台
-            /// </summary>
-            public string GptPlatform { get; private set; }
-            /// <summary>
-            /// TTS 平台
-            /// </summary>
-            public string TtsPlatform { get; private set; }
-
-        }
-
-        public class LiveConfig
-        {
-            public LiveConfig()
-            {
-                BiliRoomid = INIHelper.Read("live", "bili_roomid", "207640", ConfigModel.ConfigPath);
-                BiliTopid = INIHelper.Read("live", "bili_topid", "1,2,207640", ConfigModel.ConfigPath);
-            }
-
-            public string BiliRoomid { get; private set; }
-            public string BiliTopid { get; private set; }
-        }
-
-        public class GptConfig
-        {
-            public GptConfig()
-            {
-                OpenaiKey = INIHelper.Read("gpt", "openai_key", "your key", ConfigModel.ConfigPath);
-                OpenaiNya1 = INIHelper.Read("gpt", "openai_nya1", "你是猫娘,you are in live,我你主人", ConfigModel.ConfigPath);
-                OpenaiProxyDomain = INIHelper.Read("gpt", "openai_key", " https://api.openai.com/v1", ConfigModel.ConfigPath);
-                OpenaiMaxContext = int.Parse(INIHelper.Read("gpt", "openai_proxy_domain", "3", ConfigModel.ConfigPath));
-                //gpt-3.5-turbo | gpt-4 | gpt-4-32k
-                OpenaiModel = INIHelper.Read("gpt", "openai_model", "gpt-3.5-turbo", ConfigModel.ConfigPath);
+                public string Roomid { get;  set; }
+                public List<string> Topid { get;  set; }
 
             }
-
-            public string OpenaiKey { get; private set; }
-
-            public string OpenaiNya1 { get; private set; }
-
-            public string OpenaiProxyDomain { get; private set; }
-
-            public int OpenaiMaxContext { get; private set; }
-
-            public string OpenaiModel { get; private set; }
-        }
-
-        public class TtsConfig
-        {
-
-            public TtsConfig()
+            public class DouyinConf
             {
-                MaxTextLength = int.Parse(INIHelper.Read("tts", "max_text_length", "50", ConfigModel.ConfigPath));
-                MaxTtsLength = int.Parse(INIHelper.Read("tts", "max_tts_length", "200", ConfigModel.ConfigPath));
-                TextIntervalMs = int.Parse(INIHelper.Read("tts", "text_interval_ms", "100", ConfigModel.ConfigPath));
-                MaxWavQueue = int.Parse(INIHelper.Read("tts", "max_wav_queue", "5", ConfigModel.ConfigPath));
-                AutoDelWav = INIHelper.Read("tts", "auto_del_wav", "0", ConfigModel.ConfigPath) == "1";
+                public string Roomid { get; private set; }
 
-                MoegoeModelOnxx = INIHelper.Read("tts", "moegoe_model_onnx", ".data/models/model.onnx", ConfigModel.ConfigPath);
-                MoegoeModelConfig = INIHelper.Read("tts", "moegoe_model_config", ".data/models/config.json", ConfigModel.ConfigPath);
-                MoegoeModelPth = INIHelper.Read("tts", "moegoe_model_pth", ".data/models/model.pth", ConfigModel.ConfigPath);
-                MoegoeLengthScale = decimal.Parse(INIHelper.Read("tts", "moegoe_length_scale", "1", ConfigModel.ConfigPath));
-                MoegoeNoiseScale = decimal.Parse(INIHelper.Read("tts", "moegoe_noise_scale", "0.667", ConfigModel.ConfigPath));
-                MoegoeNoiseScaleW = decimal.Parse(INIHelper.Read("tts", "moegoe_noise_scale_w", "0.8", ConfigModel.ConfigPath));
-                MoegoeSpeakerId = int.Parse(INIHelper.Read("tts", "moegoe_speaker_id", "0", ConfigModel.ConfigPath));
             }
-            public int MaxTextLength { get; private set; }
-
-            public int MaxTtsLength { get; private set; }
-            public int TextIntervalMs { get; private set; }
-            public int MaxWavQueue { get; private set; }
-            public int IntervalMs { get; private set; }
-
-            public bool AutoDelWav { get; private set; }
-
-            #region MoeGoe
-
-            public string MoegoeModelOnxx { get; private set; }
-            public string MoegoeModelConfig { get; private set; }
-            public string MoegoeModelPth { get; private set; }
-            public decimal MoegoeLengthScale { get; private set; }
-            public decimal MoegoeNoiseScale { get; private set; }
-            public decimal MoegoeNoiseScaleW { get; private set; }
-            public int MoegoeSpeakerId { get; private set; }
-            #endregion
         }
 
+        public class GptConf
+        {
+            public string platform { get;  set; }
+
+            public OpenaiConf Openai { get;  set; }
+
+            public Glm6bConf Glm6b { get; set; }
+
+            public OtherConf Other { get; set; }
+            public class OpenaiConf
+            {
+                public string key { get;  set; }
+
+                public string Nya1 { get;  set; }
+
+                public string ProxyDomain { get;  set; }
+
+                public int MaxContext { get;  set; }
+
+                public string Model { get;  set; }
+            }
+
+            public class Glm6bConf { 
+            
+            }
+
+            public class OtherConf
+            {
+                public string TransmitUrl { get; set; }
+
+                [DataMember(Name = "q_name")]
+                public string QName { get; set; }
+            }
+        }
+
+        public class TtsConf { 
+
+            public string Platform { get; set; }
+
+            public string TextIntervalMs { get; set; }
+
+            public int MaxTextLength { get; set; }
+
+            public int MaxTtsLength { get; set; }
+
+            public int MaxWavQueue { get; set; }
+            public bool AutoDelWav { get; set; }
+
+            public MoegoeConf Moegoe { get; set; }
+
+            public class MoegoeConf
+            {
+                public string ModelOnnx { get; set; }
+
+                public string ModelConfig { get; set; }
+
+                public string ModelPth { get; set; }
+
+                public int SpeakerId { get; set; }
+
+                public decimal LengthScale { get; set; }
+
+                public decimal NoiseScale { get; set; }
+
+                public decimal NoiseScaleW { get; set; }
+            }
+        }
+
+        public class L2ddConf { 
+        public string Platform { get; set; }
+        }
+
+        public class AigcConf { 
+        
+        }
     }
-
 }

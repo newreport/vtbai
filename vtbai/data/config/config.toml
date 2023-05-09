@@ -47,16 +47,16 @@ platform = "openai"
 [tts]
 # tts 模式 moegoe | azure
 platform = "moegoe"
+# 多少毫秒输出一个字，auto 时用 wav时长/字数=间隔   auto | 数字
+text_interval_ms = "100"
 # 文本显示时最大断句
 max_text_length = 50
 # 语音最大断句
 max_tts_length = 200
-# 多少毫秒输出一个字
-text_interval_ms = 100
 # 最大 wav 缓存数量，超过时不再请求 gpt,即等播放完一条后再请求
 max_wav_queue = 5
-# 是否在播放完后自动删除生成的 wav 文件 1 true| 0 false
-auto_del_wav = 0
+# 是否在播放完后自动删除生成的 wav 文件  true| false
+auto_del_wav = false
 
     [tts.moegoe]
     # infernce_type = cpu

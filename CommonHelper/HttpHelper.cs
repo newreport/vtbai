@@ -7,27 +7,53 @@ using System.Threading.Tasks;
 
 namespace CommonHelper
 {
-    public class HttpHelper
+    public static class HttpHelper
     {
 
-        public static async Task<JObject> HttpGet(string url, List<string> param)
+        public static JObject HttpGet(string url, Dictionary<string, string> param = null)
+        {
+            string fullUrl = url;
+            if (param != null && param.Count > 0)
+            {
+                fullUrl += $"?{param.FirstOrDefault().Key}={param.FirstOrDefault().Value}";
+                param.Remove(param.FirstOrDefault().Key);
+                foreach (var item in param)
+                {
+                    fullUrl += $"&{item.Key}={item.Value}";
+                }
+            }
+            string responseBody = @"{}";
+            try
+            {
+                using var task = new HttpClient().GetAsync(fullUrl);
+                responseBody = task.Result.Content.ReadAsStringAsync().Result;
+            }
+            catch (Exception e)
+            {
+                Log.WriteLine("\nException Caught!");
+                Log.WriteLine($"Message :{e.Message}");
+            }
+            return JObject.Parse(responseBody);
+        }
+
+        public static async Task<JObject> HttpGetAsync(string url, Dictionary<string, string> param)
         {
             string fullUrl = url;
             if (param.Count > 0)
             {
-                fullUrl += $"?{param.FirstOrDefault()}";
-                param.RemoveAt(0);
+                fullUrl += $"?{param.FirstOrDefault().Key}={param.FirstOrDefault().Value}";
+                param.Remove(param.FirstOrDefault().Key);
                 foreach (var item in param)
                 {
-                    fullUrl += "&" + item;
+                    fullUrl += $"&{item.Key}={item.Value}";
                 }
             }
-            string responseBody= @"{}";
+            string responseBody = @"{}";
             try
             {
-            using HttpResponseMessage repose = await new HttpClient().GetAsync(fullUrl);
-            repose.EnsureSuccessStatusCode();
-             responseBody = await repose.Content.ReadAsStringAsync();
+                using HttpResponseMessage repose = await new HttpClient().GetAsync(fullUrl);
+                repose.EnsureSuccessStatusCode();
+                responseBody = await repose.Content.ReadAsStringAsync();
 
             }
             catch (Exception e)
@@ -36,6 +62,11 @@ namespace CommonHelper
                 Console.WriteLine("Message :{0} ", e.Message);
             }
             return JObject.Parse(responseBody);
+        }
+
+        public static async Task<JObject> HttPostAsync(string url, Dictionary<string, string> bodyData)
+        {
+            return await Task.Run(() => { return new JObject(); });
         }
 
     }

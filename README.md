@@ -47,6 +47,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 ## 二次开发
 ```mermaid
     graph TD
+    A2(TestConsole)
     A1(vtbai)
 
     B(ConfuseCore)
@@ -91,7 +92,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 
 ```
 * TestConsole 测试用终端，和程序无关
-* vtbai 主程序
+* vtbai 主程序，提供api接口
   * ConfuseCore 核心程序，引用所有模块
     * AIGC
     * GPT
@@ -111,13 +112,16 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 
 
 ## 开发环境
-> 仅 openai 模式 cpu tts 推理下可用
+> 编译器：VSCode、VS
+
+> 主机：itx，仅 openai 模式 cpu tts 推理下可用
 - CPU：5700G
 - GPU：核显
 - 主板：华硕 B550m TUF PLUS WIFI
-- 硬盘：凯侠 RC20
+- 硬盘：铠侠 RC20
 - 内存：32*4（3133hz 金百达）
-- 电源：海韵Core 650W
+- 电源：台达 300W
+- 机箱：X40 5.5L
 
 ## 生产环境
 - CPU：5900X
@@ -126,7 +130,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 - 硬盘：三星 980pro
 - 内存：16*4（3133hz 金百达）
 - 电源：先马黑钻 1000W
-
+- 机箱：长城阿基米德7
 
 
 ![Star History Chart](https://api.star-history.com/svg?repos=newreport/live_tts_chatgpt&type=Date)]

@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Tomlyn" Version="0.16.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AIGC\AIGC.csproj" />
     <ProjectReference Include="..\CommonHelper\CommonHelper.csproj" />
     <ProjectReference Include="..\ConfuseCore\ConfuseCore.csproj" />

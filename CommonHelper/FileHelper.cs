@@ -2,7 +2,7 @@
 
 namespace CommonHelper
 {
-    public class FileHelper
+    public static class FileHelper
     {
         public static void CreatePath(string path)
         {

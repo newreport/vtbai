@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace Live
 {
-    public class Douyin : ILive
+    public class Live 
     {
-        public void Initialize(string roomid)
+
+        public Live()
         {
-            throw new NotImplementedException();
         }
+
     }
 }

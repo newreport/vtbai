@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Live
+﻿namespace Live
 {
-    public interface ILive
+    public interface ILive : IDisposable
     {
-        public void Initialize(string roomid);
 
     }
 }

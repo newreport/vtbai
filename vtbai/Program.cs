@@ -48,7 +48,7 @@ if (app.Environment.IsDevelopment())
 //¼àÌýÖÁ 3939 ¶Ë¿Ú
 app.Urls.Add("http://0.0.0.0:3939");
 app.UseAuthorization();
-
+app.UseWebSockets();
 app.MapControllers();
 #endregion
 

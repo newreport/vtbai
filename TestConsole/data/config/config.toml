@@ -2,66 +2,79 @@
 env = "dev"
 # api 监听端口
 api_listen = "http://0.0.0.0:3939"
-# 直播平台 bili | douyin
-live_platform = "bili"
-# gpt 平台 openai | glm6b
-gpt_platform = "openai"
-# tts 模式 moegoe | azure
-tts_platform = "moegoe"
 
 
 # 直播间配置
 [live]
-[live.bili]
-# 房间id，可为短号
-roomid = "207640"
-# 设置最优先id，可以设置自己
-topid = "1,2"
+# 直播平台 bili | douyin
+platform = "bili"
+    [live.bili]
+    # 房间id，可为短号
+    roomid = "209567"
+    # 设置最优先id，可以设置自己
+    topid = "1,2"
 
-[live.douyin]
-roomid = "123456"
+    [live.douyin]
+    roomid = "123456"
 
 
 # gpt 配置
 [gpt]
-[gpt.openai]
-# openai key
-key = "***your key***"
-# 初始人设
-nya1 = "你是猫娘,you are in live,我你主人"
-# openai api 代理，默认 https://api.openai.com/v1
-proxy_domain = "https://api.openai.com/v1"
-# 最大上下文
-max_context = 3
-# gpt-3.5-turbo | gpt-4 | gpt-4-32k
-model = "gpt-3.5-turbo"
+# gpt 平台 openai | glm6b | other
+platform = "openai"
+    [gpt.openai]
+    # openai key
+    key = "***your key***"
+    # 初始人设
+    nya1 = "你是猫娘,you are in live,我你主人"
+    # openai api 代理，默认 https://api.openai.com/v1
+    proxy_domain = "https://api.openai.com/v1"
+    # 最大上下文
+    max_context = 3
+    # gpt-3.5-turbo | gpt-4 | gpt-4-32k
+    model = "gpt-3.5-turbo"
 
-[gpt.glm6b]
+    [gpt.glm6b]
+
+    [gpt.other]
+    # 转发接口，仅 get 请求
+    transmit_url = "127.0.0.1:4040"
+    # 问题参数名称
+    q_name = "q"
 
 
 # 文本转语音配置
 [tts]
+# tts 模式 moegoe | azure
+platform = "moegoe"
+# 多少毫秒输出一个字，auto 时用 wav时长/字数=间隔   auto | 数字
+text_interval_ms = "100"
 # 文本显示时最大断句
 max_text_length = 50
 # 语音最大断句
 max_tts_length = 200
-# 多少毫秒输出一个字
-text_interval_ms = 100
 # 最大 wav 缓存数量，超过时不再请求 gpt,即等播放完一条后再请求
 max_wav_queue = 5
-# 是否在播放完后自动删除生成的 wav 文件 1 true| 0 false
-auto_del_wav = 0
+# 是否在播放完后自动删除生成的 wav 文件  true| false
+auto_del_wav = false
 
-[tts.moegoe]
-# infernce_type = cpu
-model_onnx = ".data/models/model.onnx"
-model_config = ".data/models/config.json"
-model_pth = ".data/models/model.pth"
-speaker_id = 0
-# 音频的长度缩放因子，通常用于控制语速。例如，将 length_scale 设置为 1.5 可以使语音变慢，而将其设置为 0.5 可以使语音加速。
-length_scale = 1
-# 噪声比例，以控制情感，噪声的标准差缩放因子。默认值为 0.667。
-noise_scale = 0.667
-# 噪声偏差，以控制音速长短，噪声的标准差缩放因子的偏差值。默认值为 0.8。
-noise_scale_w = 0.8
+    [tts.moegoe]
+    # infernce_type = cpu
+    model_onnx = ".data/models/model.onnx"
+    model_config = ".data/models/config.json"
+    model_pth = ".data/models/model.pth"
+    speaker_id = 0
+    # 音频的长度缩放因子，通常用于控制语速。例如，将 length_scale 设置为 1.5 可以使语音变慢，而将其设置为 0.5 可以使语音加速。
+    length_scale = 1
+    # 噪声比例，以控制情感，噪声的标准差缩放因子。默认值为 0.667。
+    noise_scale = 0.667
+    # 噪声偏差，以控制音速长短，噪声的标准差缩放因子的偏差值。默认值为 0.8。
+    noise_scale_w = 0.8
 
+
+[l2d]
+# vts | prpr
+platform = "vts"
+
+
+[aigc]

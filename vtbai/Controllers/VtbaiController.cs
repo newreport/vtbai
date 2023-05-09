@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace vtbai.Controllers
 {
-    [Route("v1/[controller]/[Action]")]
-    [ApiController]
-    public class VtbaiController : ControllerBase
+    public class VtbaiController : BaseApiController
     {
         private readonly ILogger<VtbaiController> _logger;
 

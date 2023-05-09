@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace CommonHelper
 {
-    public static class TomlHelper
+    public static class Log
     {
-        public static Tomlyn.Model.TomlTable? ToModel(string str)
+        public static void WriteLine(string str)
         {
-            return Toml.ToModel(str);
+            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss:fff") + " " + str);
         }
+
     }
 }
