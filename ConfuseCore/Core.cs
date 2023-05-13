@@ -10,24 +10,25 @@ namespace ConfuseCore
 {
     public class Core
     {
+        ILive _live;
         public Core()
         {
-            var livePlatform = ConfigModel.ConfigToml.Live.Platform;
+            var livePlatform = GModel.Conf.Live.Platform;
 
             Log.WriteLine("---------- start init live platform ----------");
-            ILive live = null;
             switch (livePlatform)
             {
                 case "bili":
-                    live = new Bili();
+                    _live = new Bili();
                     break;
                 case "douyin":
-                    live = new Bili();
+                    _live = new Bili();
                     break;
                 default:
-                    live = new Bili();
+                    _live = new Bili();
                     break;
             }
+
             Log.WriteLine("---------- end init live platform ----------");
 
             Log.WriteLine("");

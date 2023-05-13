@@ -13,5 +13,16 @@ namespace CommonHelper
             Console.WriteLine(DateTime.Now.ToString("hh:mm:ss:fff") + " " + str);
         }
 
+        public static void WriteLine(string str1, string str2)
+        {
+            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss:fff") + " " + str1 + "  ::  " + str2);
+        }
+
+        public static void Error(string e)
+        {
+            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss:fff") + " " + e);
+
+        }
+
     }
 }

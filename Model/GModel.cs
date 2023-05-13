@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Model
+{
+    public static class GModel
+    {
+        public static ConfigModel Conf = ConfigModel.RefreshConfig();
+
+        public static void Refresh(this ConfigModel value) {
+            value = ConfigModel.RefreshConfig();
+        }
+    }
+
+
+}

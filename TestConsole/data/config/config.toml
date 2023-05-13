@@ -8,9 +8,20 @@ api_listen = "http://0.0.0.0:3939"
 [live]
 # 直播平台 bili | douyin
 platform = "bili"
+
+# 队列容量 -1 为无容量限制，最小值 5
+# api 队列容量
+api_queue_length = 1
+# 付费队列容量
+pay_queue_length = -1
+# 付费队列触发最低金额  Bili Douyin ￥，YTB  $
+pay_threshold = 0.5
+# 免费队列容量，最小值 5，不能设置 -1
+free_queue_length = 10
+
     [live.bili]
     # 房间id，可为短号
-    roomid = "209567"
+    roomid = "21110048"
     # 设置最优先id，可以设置自己
     topid = "1,2"
 
@@ -22,6 +33,7 @@ platform = "bili"
 [gpt]
 # gpt 平台 openai | glm6b | other
 platform = "openai"
+
     [gpt.openai]
     # openai key
     key = "***your key***"
