@@ -21,7 +21,7 @@ free_queue_length = 10
 
     [live.bili]
     # 房间id，可为短号
-    roomid = 21110048
+    roomid = 213
     # 设置最优先id，可以设置自己
     topid = "1,2"
 

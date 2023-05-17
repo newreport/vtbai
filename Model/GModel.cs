@@ -10,9 +10,12 @@ namespace Model
     {
         public static ConfigModel Conf = ConfigModel.RefreshConfig();
 
-        public static void Refresh(this ConfigModel value) {
+        public static void Refresh(this ConfigModel value)
+        {
             value = ConfigModel.RefreshConfig();
         }
+
+        public static bool IsDev => Conf.Env == "dev";
     }
 
 

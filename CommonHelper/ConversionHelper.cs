@@ -75,10 +75,12 @@ namespace CommonHelper
 
 
         #region 解压压缩
-
+        //https://www.prowaretech.com/articles/current/dot-net/compression-brotli#!
+        //https://www.infoworld.com/article/3660629/how-to-compress-and-decompress-strings-in-c-sharp.html
+        //https://www.dotnetperls.com/compress
 
         // 使用System.IO.Compression进行Deflate压缩
-        public static byte[] MicrosoftCompress(byte[] data)
+        public static byte[] ZlibCompress(byte[] data)
         {
             using (var uncompressed = new MemoryStream(data))
             {  // 这里举例用的是内存中的数据；需要对文本进行压缩的话，使用 FileStream 即可
@@ -95,9 +97,8 @@ namespace CommonHelper
             };
         }
 
-
         // 使用System.IO.Compression进行Deflate解压
-        public static byte[] MicrosoftDecompress(byte[] data)
+        public static byte[] ZlibDecompress(byte[] data)
         {
             using (var compressed = new MemoryStream(data))
             {
@@ -107,6 +108,58 @@ namespace CommonHelper
                     deflateStream.CopyTo(decompressed);
                     byte[] result = decompressed.ToArray();
                     return result;
+                }
+            }
+        }
+        public static byte[] BrotliDecompress(byte[] bytes)
+        {
+            using (var memoryStream = new MemoryStream(bytes))
+            {
+                using (var outputStream = new MemoryStream())
+                {
+                    using (var decompressStream = new BrotliStream(memoryStream, CompressionMode.Decompress))
+                    {
+                        decompressStream.CopyTo(outputStream);
+                    }
+                    return outputStream.ToArray();
+                }
+            }
+        }
+        public static byte[] BrotliCompress(byte[] bytes)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var brotliStream = new BrotliStream(memoryStream, CompressionLevel.Optimal))
+                {
+                    brotliStream.Write(bytes, 0, bytes.Length);
+                }
+                return memoryStream.ToArray();
+            }
+        }
+
+        public static byte[] GZipCompress(byte[] bytes)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var gzipStream = new GZipStream(memoryStream, CompressionLevel.Optimal))
+                {
+                    gzipStream.Write(bytes, 0, bytes.Length);
+                }
+                return memoryStream.ToArray();
+            }
+        }
+        public static byte[] GZipDecompress(byte[] bytes)
+        {
+            using (var memoryStream = new MemoryStream(bytes))
+            {
+
+                using (var outputStream = new MemoryStream())
+                {
+                    using (var decompressStream = new GZipStream(memoryStream, CompressionMode.Decompress))
+                    {
+                        decompressStream.CopyTo(outputStream);
+                    }
+                    return outputStream.ToArray();
                 }
             }
         }

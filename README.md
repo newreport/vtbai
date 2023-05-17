@@ -151,13 +151,13 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 #### 接收
 | 命令                          | 注释             |
 | ----------------------------- | ---------------- |
-| COMBO_SEND                    | 赠送礼物         |
 | **DANMU_MSG**                 | 弹幕内容         |
 | **GUARD_BUY**                 | 购买舰长         |
 | **USER_TOAST_MSG**            | 续费舰长         |
 | **SUPER_CHAT_MESSAGE**        | 超级留言         |
 | **SUPER_CHAT_MESSAGE_JPN**    | 超级留言-JP      |
-| SEND_GIFT                     | 赠送礼物         |
+| **SEND_GIFT**                     | 赠送礼物         |
+| COMBO_SEND                    | 赠送礼物         |
 | ROOM_REAL_TIME_MESSAGE_UPDATE | 主播粉丝信息更新 |
 | ENTRY_EFFECT                  | 进入特效         |
 | HOT_RANK_CHANGED              | 主播实时活动排名 |

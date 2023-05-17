@@ -9,29 +9,38 @@ namespace Model
     public class LiveModel
     {
         /// <summary>
+        /// 消息类型
+        /// </summary>
+        public LiveMessageType Type { get; set; }
+        /// <summary>
+        /// id
+        /// </summary>
+        public string Uid { get; set; }
+        /// <summary>
+        /// 昵称
+        /// </summary>
+        public string NickName { get;set; }
+        /// <summary>
         /// 付费金额 付费/免费队列
         /// </summary>
         public decimal PayMoney { get; set; }
-
-        public MessageType Type { get; set; }
         /// <summary>
         /// 权重
         /// </summary>
         public int Weigth { get; set; }
         /// <summary>
-        /// 昵称
+        /// 动作
         /// </summary>
-        public string Name { get; set; }
-
+        public string Action { get; set; }
         /// <summary>
-        /// id
+        /// 礼物名称 舰长/提督/总督
         /// </summary>
-        public string Uid { get; set; }
+        public string GiftName { get; set; }
     }
 
 
 
-    public enum MessageType
+    public enum LiveMessageType
     {
         None,
         /// <summary>
@@ -45,7 +54,11 @@ namespace Model
         /// <summary>
         /// 舰长  Bili
         /// </summary>
-        Guard
+        Guard,
+        /// <summary>
+        /// 弹幕
+        /// </summary>
+        Danmu,
 
     }
 }

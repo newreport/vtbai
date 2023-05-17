@@ -19,13 +19,13 @@ namespace ConfuseCore
             switch (livePlatform)
             {
                 case "bili":
-                    _live = new Bili();
+                    _live = new Bili(GModel.Conf.Live.Bili.Roomid);
                     break;
                 case "douyin":
-                    _live = new Bili();
+                    _live = new Bili(GModel.Conf.Live.Bili.Roomid);
                     break;
                 default:
-                    _live = new Bili();
+                    _live = new Bili(GModel.Conf.Live.Bili.Roomid);
                     break;
             }
 
