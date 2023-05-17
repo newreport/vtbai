@@ -6,11 +6,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Net.NetworkInformation;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Threading.Channels;
-using System.Buffers.Text;
-using System.Net;
-using System.IO.Compression;
+
 
 namespace Live
 {
@@ -24,8 +20,8 @@ namespace Live
         {
             #region 获取房间id和token
             var response = HttpHelper.HttpGet("https://api.live.bilibili.com/room/v1/Room/get_info", new Dictionary<string, string>() { { "room_id", GModel.Conf.Live.Bili.Roomid } });
-            connect.Roomid = response["data"]!["room_id"]!.ToString();
-            Log.WriteLine("bilibili 真实房间号", connect.Roomid);
+            connect.Roomid = int.Parse(response["data"]!["room_id"]!.ToString());
+            Log.WriteLine("bilibili 真实房间号", connect.Roomid.ToString());
 
             response = HttpHelper.HttpGet($"https://api.live.bilibili.com/room/v1/Danmu/getConf?room_id={connect.Roomid}&platform=pc&player=web");
             var wsDomain = response["data"]!["host"]!.ToString();
@@ -36,8 +32,7 @@ namespace Live
             connect.Token = response["data"]!["token"]!.ToString();
             #endregion
 
-
-            #region websocket 认证 & 心跳
+            #region websocket 认证 & 心跳 & 接收
             _ws.ConnectAsync(connect.WsUrl, connect.Cancellation).Wait();
             var packetModel = new { uid = 0, roomid = connect.Roomid, protover = 3, platform = "web", type = 2, key = connect.Token, };
             var playload = JsonConvert.SerializeObject(packetModel);
@@ -52,19 +47,66 @@ namespace Live
             #endregion
         }
 
+
+        #region 接收消息，并入队
+        /// <summary>
+        /// 接收消息
+        /// </summary>
+        /// <returns></returns>
         async Task ReceiveMessageLoop()
         {
-            var stableBuffer = new byte[16];
-            var buffer = new byte[4096];
+
+            var headBuffer = new byte[connect.headLength];
+            //var headBuffer = new byte[16];
             while (connect.Connected)
             {
-                await _ws.ReceiveAsync(stableBuffer, connect.Cancellation);
-                Log.WriteLine("信息流", Encoding.UTF8.GetString(stableBuffer));
+                #region 头信息
+                await _ws.ReceiveAsync(headBuffer, connect.Cancellation);
+                Log.WriteLine("头信息", ConversionHelper.ByteToHexS(headBuffer.Take(connect.headLength).ToArray()));
+                int countLength = ConversionHelper.GetInt(headBuffer.Take(4).ToArray());
+                var bodyBuffer = new byte[countLength - connect.headLength];
+                await _ws.ReceiveAsync(bodyBuffer, connect.Cancellation);
+                #endregion
+
+                #region 协议版本
+                int agreement = ConversionHelper.GetInt(headBuffer.Skip(6).Take(2).ToArray());
+                string bodyMsg = "";
+                switch (agreement)
+                {
+                    //普通正文
+                    case 0:
+                        bodyMsg = Encoding.UTF8.GetString(bodyBuffer);
+                        break;
+                    //心跳|认证包
+                    case 1:
+                        Log.WriteLine("认证/心跳包", Encoding.UTF8.GetString(bodyBuffer));
+                        break;
+                    //普通包 zlib 压缩
+                    case 2:
+                        Log.WriteLine("zlib", Encoding.UTF8.GetString(ConversionHelper.MicrosoftDecompress(bodyBuffer)));
+                        break;
+                    //普通包 brotil 压缩
+                    case 3:
+                        Log.WriteLine("brotil", Encoding.UTF8.GetString(bodyBuffer));
+                        break;
+
+                    default:
+                        bodyMsg = Encoding.UTF8.GetString(bodyBuffer);
+                        break;
+                }
+                if(bodyMsg.Length> 0) Log.WriteLine("体信息", bodyMsg);
+                #endregion
+
+
             }
         }
+        #endregion
 
-
-
+        #region 心跳 & 发送消息
+        /// <summary>
+        /// 心跳
+        /// </summary>
+        /// <returns></returns>
         async Task HeartbeatLoop()
         {
             try
@@ -88,7 +130,7 @@ namespace Live
 
         async Task SendSocketDataAsync(int action, string body = "", string remarks = "")
         {
-            //头大小 头部长度 心跳包 认证包/心跳包 自增 消息体
+            //总长度 头大小 头部长度 心跳包 认证包/心跳包 自增 消息体
             await SendSocketDataAsync(0, connect.headLength, 1, action, 1, body, remarks);
         }
 
@@ -150,15 +192,20 @@ namespace Live
                 await _ws.SendAsync(buffer, WebSocketMessageType.Binary, true, connect.Cancellation);
             }
         }
+        #endregion
 
+        /// <summary>
+        /// bili 链接对象
+        /// </summary>
         private class Connect
         {
+            //参考仓库：https://github.com/a820715049/BiliBiliLive
             public Connect()
             {
                 WS = new ClientWebSocket();
             }
             public ClientWebSocket WS { get; set; }
-            public string Roomid { get; set; }
+            public int Roomid { get; set; }
             public Uri WsUrl { get; set; }
             public string Token { get; set; }
             public short headLength => 16;
@@ -166,15 +213,7 @@ namespace Live
             public CancellationToken Cancellation = new CancellationToken();
 
             public bool Connected => WS != null && (WS.State == WebSocketState.Connecting || WS.State == WebSocketState.Open);
-
-            /// <summary>
-            /// 接收缓存区
-            /// </summary>
-            public byte[] RecTemp { get; set; }
-
-
         }
-
 
 
         public void Dispose()

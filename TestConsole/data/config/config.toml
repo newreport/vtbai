@@ -1,5 +1,5 @@
 ﻿# 环境 pro | dev
-env = "dev"
+env = "pro"
 # api 监听端口
 api_listen = "http://0.0.0.0:3939"
 
@@ -21,7 +21,7 @@ free_queue_length = 10
 
     [live.bili]
     # 房间id，可为短号
-    roomid = "21110048"
+    roomid = 21110048
     # 设置最优先id，可以设置自己
     topid = "1,2"
 

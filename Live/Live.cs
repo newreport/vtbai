@@ -13,8 +13,9 @@ namespace Live
 
         public Live()
         {
-            TopQue = new();
+            //最优先队列
 
+            TopQue = new();
             if (GModel.Conf.Live.ApiQueueLength > 0) ApiQue = new(GModel.Conf.Live.ApiQueueLength);
             else ApiQue = new();
 

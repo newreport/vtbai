@@ -31,8 +31,6 @@ namespace ConfuseCore
 
             Log.WriteLine("---------- end init live platform ----------");
 
-            Log.WriteLine("");
-
         }
 
     }

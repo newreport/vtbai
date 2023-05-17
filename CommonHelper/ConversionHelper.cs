@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace CommonHelper
     public static class ConversionHelper
     {
 
+        #region 字节数组转换
         /// <summary>
         /// 字节型转换成十六进制字符串
         /// </summary>
@@ -43,7 +45,16 @@ namespace CommonHelper
             }
             return ByteOut;
         }
-
+        public static int GetInt(byte[] buffer)
+        {
+            var temp = buffer.Reverse().ToList();
+            int sum = temp[0];
+            for (int i = 1; i < temp.Count; i++)
+            {
+                sum += temp[i] * (int)Math.Pow(16, i * 2);
+            }
+            return sum;
+        }
 
         public static byte[] GetBytes(int value)
         {
@@ -60,6 +71,47 @@ namespace CommonHelper
         {
             return new byte[] { (byte)(value >> 8), (byte)value };
         }
+        #endregion
+
+
+        #region 解压压缩
+
+
+        // 使用System.IO.Compression进行Deflate压缩
+        public static byte[] MicrosoftCompress(byte[] data)
+        {
+            using (var uncompressed = new MemoryStream(data))
+            {  // 这里举例用的是内存中的数据；需要对文本进行压缩的话，使用 FileStream 即可
+                using (var compressed = new MemoryStream())
+                {
+                    using (var deflateStream = new DeflateStream(compressed, CompressionMode.Compress)) // 注意：这里第一个参数填写的是压缩后的数据应该被输出到的地方
+                    {
+                        uncompressed.CopyTo(deflateStream); // 用 CopyTo 将需要压缩的数据一次性输入；也可以使用Write进行部分输入
+                        deflateStream.Close();  // 在Close中，会先后执行 Finish 和 Flush 操作。
+                        byte[] result = compressed.ToArray();
+                        return result;
+                    }
+                }
+            };
+        }
+
+
+        // 使用System.IO.Compression进行Deflate解压
+        public static byte[] MicrosoftDecompress(byte[] data)
+        {
+            using (var compressed = new MemoryStream(data))
+            {
+                using (var decompressed = new MemoryStream())
+                {
+                    DeflateStream deflateStream = new DeflateStream(compressed, CompressionMode.Decompress); // 注意： 这里第一个参数同样是填写压缩的数据，但是这次是作为输入的数据
+                    deflateStream.CopyTo(decompressed);
+                    byte[] result = decompressed.ToArray();
+                    return result;
+                }
+            }
+        }
+        #endregion
+
 
     }
 }

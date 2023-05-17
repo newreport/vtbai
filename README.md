@@ -4,15 +4,17 @@ https://github.com/newreport/vtbai/releases/tag/1.1-py
 
 
 # Docker 版本
-
+> [vits演示模型](https://huggingface.co/newreport/live_tts_default_model/tree/main) 商用请自炼自然人同意的合法声源或用 Azure
+ 
+> [敏感词](https://snginx.newreport.top/my_sensitive_words.7z)  解压密码：kkDXCD6mwaU7wU
 ```bash
 docker run -d --restart=always --name vtbai -p 3939:3939 -v vtbai-data:/data newreport/vtbai
 ```
-|功能|地址|
-|---|---|
-|swagger 后端 api 列表|http://127.0.0.1:3939/swagger|
-|obs弹幕(api 方式，固定 0.1s 刷新一次)|http://127.0.0.1:3939/static/subtitle_api.html|
-|obs弹幕(websocket)|http://127.0.0.1:3939/static/subtitle_websocket.html|
+| 功能                                  | 地址                                                 |
+| ------------------------------------- | ---------------------------------------------------- |
+| swagger 后端 api 列表                 | http://127.0.0.1:3939/swagger                        |
+| obs弹幕(api 方式，固定 0.1s 刷新一次) | http://127.0.0.1:3939/static/subtitle_api.html       |
+| obs弹幕(websocket 方式，实时)                    | http://127.0.0.1:3939/static/subtitle_websocket.html |
 
 
 # 架构
@@ -26,6 +28,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 
 
 ## 功能
+
 - 支持 api 扩展 gpt 和 tts，扩展见swagger
 - 支持自定义优先级队列
 
@@ -44,7 +47,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 ## 注意事项
 > 关于鉴权，所有请求均为了方便使用和调试均为 get，此项目一般在本地跑不会做任何鉴权。需要鉴权请用 nginx/[nginx proxy manager](https://nginxproxymanager.com/) 添加信任用户。或者用 [frp](https://github.com/fatedier/frp)/ [nps](https://github.com/ehang-io/nps) 内穿到本地使用
 
-## 二次开发
+## 项目架构
 ```mermaid
     graph TD
     A2(TestConsole)
@@ -91,24 +94,16 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
     Y-->Z
 
 ```
-* TestConsole 测试用终端，和程序无关
-* vtbai 主程序，提供api接口
-  * ConfuseCore 核心程序，引用所有模块
-    * AIGC
-    * GPT
-    * L2d
-    * Live
-    * TTS
-      * Model
-        * CommonHelper
-
-
-## 参考了以下资源
-- [vits](https://github.com/jaywalnut310/vits) vits source
-- [MoeGoe](https://github.com/CjangCjengh/MoeGoe.git) vits chinese
-- [vits_with_chatgpt-gpt3](https://github.com/Paraworks/vits_with_chatgpt-gpt3) tts 推理参考
-- [blivedm](https://github.com/xfgryujk/blivedm/tree/master) 抓取 b 站直播间信息
-- [演示模型](https://huggingface.co/newreport/live_tts_default_model/tree/main) vits model (商用请自炼自然人同意的合法声源或用 Azure)
+* **TestConsole** 测试用终端，和程序无关
+* **vtbai** 主程序，提供 api 接口和启动 Core
+  * **ConfuseCore** 核心程序，引用所有模块进行处理
+    * **AIGC**
+    * **GPT** 给 chatgpt/glm6b 发送请求并接收
+    * **L2d** 给 vts 发送 api 请求
+    * **Live**  抓取直播间
+    * **TTS** 文本转语音
+      * **Model** 富血模型
+        * **CommonHelper**  工具类
 
 
 ## 开发环境
@@ -132,5 +127,50 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 - 电源：先马黑钻 1000W
 - 机箱：长城阿基米德7
 
+# 参考资源
+
+## Docker版（C#）
+- [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) b 站 api 文档
+- [BiliBiliLive](https://github.com/a820715049/BiliBiliLive) b 站 websocket 实现
+- [MoeGoe](https://github.com/CjangCjengh/MoeGoe.git) vits chinese
+
+## python版
+- [vits](https://github.com/jaywalnut310/vits) vits source
+- [MoeGoe](https://github.com/CjangCjengh/MoeGoe.git) vits chinese
+- [vits_with_chatgpt-gpt3](https://github.com/Paraworks/vits_with_chatgpt-gpt3) tts 推理
+- [blivedm](https://github.com/xfgryujk/blivedm/tree/master) python 抓取 b 站直播间信息
+
+
 
 ![Star History Chart](https://api.star-history.com/svg?repos=newreport/live_tts_chatgpt&type=Date)]
+
+
+# 二次开发
+## Live
+### Bilibili
+#### 接收
+| 命令                          | 注释             |
+| ----------------------------- | ---------------- |
+| COMBO_SEND                    | 赠送礼物         |
+| **DANMU_MSG**                 | 弹幕内容         |
+| **GUARD_BUY**                 | 购买舰长         |
+| **USER_TOAST_MSG**            | 续费舰长         |
+| **SUPER_CHAT_MESSAGE**        | 超级留言         |
+| **SUPER_CHAT_MESSAGE_JPN**    | 超级留言-JP      |
+| SEND_GIFT                     | 赠送礼物         |
+| ROOM_REAL_TIME_MESSAGE_UPDATE | 主播粉丝信息更新 |
+| ENTRY_EFFECT                  | 进入特效         |
+| HOT_RANK_CHANGED              | 主播实时活动排名 |
+| INTERACT_WORD                 | 进入房间         |
+| LIVE                          | 直播开始         |
+| LIVE_INTERACTIVE_GAME         |
+| NOTICE_MSG                    | 直播间广播       |
+| ONLINE_RANK_COUNT             | 高能榜数量更新   |
+| ONLINE_RANK_V2                | 高能榜数据       |
+| ONLINE_RANK_TOP3              | 用户进高能榜前三 |
+| PREPARING                     | 主播准备中       |
+| STOP_LIVE_ROOM_LIST           | 停止的直播间信息 |
+| SYS_MSG                       | 系统消息         |
+| TRADING_SCORE                 |
+| WELCOME                       | 迎加入房间       |
+| WELCOME_GUARD                 | 欢迎房管加入房间 |
