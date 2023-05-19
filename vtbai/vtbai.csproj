@@ -21,7 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CommonHelper\CommonHelper.csproj" />
     <ProjectReference Include="..\ConfuseCore\ConfuseCore.csproj" />
-    <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
 
   <ItemGroup>

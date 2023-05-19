@@ -11,7 +11,7 @@ platform = "bili"
 
 # 队列容量 -1 为无容量限制，最小值 5
 # api 队列容量
-api_queue_length = 1
+api_queue_length = -1
 # 付费队列容量
 pay_queue_length = -1
 # 付费队列触发最低金额  Bili Douyin ￥，YTB  $

@@ -1,6 +1,5 @@
 ﻿
 using ConfuseCore;
-using Model;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
 using System.Text;

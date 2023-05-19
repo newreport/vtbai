@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model
+namespace ConfuseCore
 {
     public static class GModel
     {
@@ -17,6 +17,4 @@ namespace Model
 
         public static bool IsDev => Conf.Env == "dev";
     }
-
-
 }

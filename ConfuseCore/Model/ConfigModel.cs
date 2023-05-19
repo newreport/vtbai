@@ -1,10 +1,9 @@
-﻿
-using Microsoft.VisualBasic;
+﻿using Microsoft.VisualBasic;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
 using Tomlyn;
 
-namespace Model
+namespace ConfuseCore.Model
 {
     public class ConfigModel
     {
@@ -44,7 +43,7 @@ namespace Model
             return configToml;
         }
 
-        public LiveConf Live { get; set; }
+        public Live.Live.LiveConf Live { get; set; }
 
         public GptConf Gpt { get; set; }
 
@@ -54,30 +53,6 @@ namespace Model
 
         public AigcConf Aigc { get; set; }
 
-        public class LiveConf
-        {
-            public BiliConf Bili { get; set; }
-            public DouyinConf Douyin { get; set; }
-
-            public string Platform { get; set; }
-
-            public int ApiQueueLength { get; set; }
-            public int PayQueueLength { get; set; }
-            public decimal PayThreshold { get; set; }
-            public int FreeQueueLength { get; set; }
-
-            public class BiliConf
-            {
-                public string Roomid { get; set; }
-                public List<string> Topid { get; set; }
-
-            }
-            public class DouyinConf
-            {
-                public string Roomid { get; private set; }
-
-            }
-        }
 
         public class GptConf
         {

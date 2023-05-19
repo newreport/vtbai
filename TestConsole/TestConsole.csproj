@@ -14,7 +14,6 @@
     <ProjectReference Include="..\ConfuseCore\ConfuseCore.csproj" />
     <ProjectReference Include="..\GPT\GPT.csproj" />
     <ProjectReference Include="..\Live\Live.csproj" />
-    <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\TTS\TTS.csproj" />
   </ItemGroup>
 

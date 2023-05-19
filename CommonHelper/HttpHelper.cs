@@ -36,10 +36,10 @@ namespace CommonHelper
             return JObject.Parse(responseBody);
         }
 
-        public static async Task<JObject> HttpGetAsync(string url, Dictionary<string, string> param)
+        public static async Task<JObject> HttpGetAsync(string url, Dictionary<string, string> param=null)
         {
             string fullUrl = url;
-            if (param.Count > 0)
+            if (param != null && param.Count > 0)
             {
                 fullUrl += $"?{param.FirstOrDefault().Key}={param.FirstOrDefault().Value}";
                 param.Remove(param.FirstOrDefault().Key);

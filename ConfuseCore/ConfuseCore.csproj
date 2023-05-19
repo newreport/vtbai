@@ -12,7 +12,6 @@
     <ProjectReference Include="..\GPT\GPT.csproj" />
     <ProjectReference Include="..\L2d\L2d.csproj" />
     <ProjectReference Include="..\Live\Live.csproj" />
-    <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\TTS\TTS.csproj" />
   </ItemGroup>
 

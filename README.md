@@ -15,7 +15,7 @@ docker run -d --restart=always --name vtbai -p 3939:3939 -v vtbai-data:/data new
 | swagger 后端 api 列表                 | http://127.0.0.1:3939/swagger                        |
 | obs弹幕(api 方式，固定 0.1s 刷新一次) | http://127.0.0.1:3939/static/subtitle_api.html       |
 | obs弹幕(websocket 方式，实时)                    | http://127.0.0.1:3939/static/subtitle_websocket.html |
-
+|后台管理，配置toml和模型（暂未实现）|http://127.0.0.1:3939/admin|
 
 # 架构
 blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 文本转语音）——>vts（语音转口型，快捷键触发表情）——>obs(推流)
@@ -47,63 +47,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 ## 注意事项
 > 关于鉴权，所有请求均为了方便使用和调试均为 get，此项目一般在本地跑不会做任何鉴权。需要鉴权请用 nginx/[nginx proxy manager](https://nginxproxymanager.com/) 添加信任用户。或者用 [frp](https://github.com/fatedier/frp)/ [nps](https://github.com/ehang-io/nps) 内穿到本地使用
 
-## 项目架构
-```mermaid
-    graph TD
-    A2(TestConsole)
-    A1(vtbai)
 
-    B(ConfuseCore)
-
-    D1(AIGC)
-    D2(GPT)
-    D3(L2d)
-    D4(Live)
-    D5(TTS)
-
-    Y(Model)
-
-    Z(CommonHelper)
-    A1-->B
-    A1-->Z
-    A1-->Y
-
-    B-->D1
-    B-->D2
-    B-->D3
-    B-->D4
-    B-->D5
-    B-->Y
-    B-->Z
-
-    D1-->Y
-    D1-->Z
-    
-    D2-->Y
-    D2-->Z
-
-    D3-->Y
-    D3-->Z
-
-    D4-->Y
-    D4-->Z
-
-    D5-->Y
-    D5-->Z
-
-    Y-->Z
-
-```
-* **TestConsole** 测试用终端，和程序无关
-* **vtbai** 主程序，提供 api 接口和启动 Core
-  * **ConfuseCore** 核心程序，引用所有模块进行处理
-    * **AIGC**
-    * **GPT** 给 chatgpt/glm6b 发送请求并接收
-    * **L2d** 给 vts 发送 api 请求
-    * **Live**  抓取直播间
-    * **TTS** 文本转语音
-      * **Model** 富血模型
-        * **CommonHelper**  工具类
 
 
 ## 开发环境
@@ -133,6 +77,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 - [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) b 站 api 文档
 - [BiliBiliLive](https://github.com/a820715049/BiliBiliLive) b 站 websocket 实现
 - [MoeGoe](https://github.com/CjangCjengh/MoeGoe.git) vits chinese
+- [OpenAI-API-dotnet](https://github.com/OkGoDoIt/OpenAI-API-dotnet)
 
 ## python版
 - [vits](https://github.com/jaywalnut310/vits) vits source
@@ -146,6 +91,56 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 
 
 # 二次开发
+## 项目架构
+```mermaid
+    graph TD
+    A2(TestConsole)
+    A1(vtbai)
+
+    B(ConfuseCore)
+
+    D1(AIGC)
+    D2(GPT)
+    D3(L2d)
+    D4(Live)
+    D5(TTS)
+
+    Z(CommonHelper)
+    A1-->B
+    A1-->Z
+
+    B-->D1
+    B-->D2
+    B-->D3
+    B-->D4
+    B-->D5
+    B-->Z
+
+    D1-->Z
+    
+    D2-->Z
+
+    D3-->Z
+
+    D4-->Z
+
+    D5-->Z
+
+    Z-->Tomlyn
+    Z-->TinyPinyin.Net
+    Z-->Newtonsoft.Json
+
+
+```
+* **TestConsole** 测试用终端，和程序无关
+* **vtbai** 主程序，提供 api 接口和启动 Core
+  * **ConfuseCore** 核心程序，引用所有模块进行处理
+    * **AIGC**
+    * **GPT** 给 chatgpt/glm6b 发送请求并接收
+    * **L2d** 给 vts 发送 api 请求
+    * **Live**  抓取直播间
+    * **TTS** 文本转语音
+      * **CommonHelper**  工具类
 ## Live
 ### Bilibili
 #### 接收
