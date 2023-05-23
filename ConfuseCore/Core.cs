@@ -1,4 +1,5 @@
-﻿using Live;
+﻿using GPT;
+using Live;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -11,32 +12,53 @@ namespace ConfuseCore
     public class Core : IDisposable
     {
         ILive _live;
-        string _livePlatform = GModel.Conf.Live.Platform;
+        IGPT _gpt;
+
 
         bool runing = false;
 
-        public Core()
+        public async Task Start()
         {
-
             runing = true;
+            //goto Tt;
             #region live
-
             Log.WriteLine("---------- start init live platform ----------");
-            switch (_livePlatform)
+            switch (GModel.Conf.Live.Platform)
             {
                 case "bili":
                     _live = new Bili(GModel.Conf.Live, GModel.IsDev);
                     break;
                 case "douyin":
-                    _live = new Bili(GModel.Conf.Live, GModel.IsDev);
+                    _live = new Douyin(GModel.Conf.Live, GModel.IsDev);
                     break;
                 default:
                     _live = new Bili(GModel.Conf.Live, GModel.IsDev);
                     break;
             }
-            _live.Initialization().Wait();
+            await _live.Initialization();
             Log.WriteLine("---------- end init live platform ----------");
+        #endregion
+        Tt:;
+            #region gpt
+            Log.WriteLine("---------- start init gpt platform ----------");
+            switch (GModel.Conf.Gpt.Platform)
+            {
+                case "chatgpt":
+                    _gpt = new Chatgpt(GModel.Conf.Gpt, GModel.IsDev);
+                    break;
+                default:
+                    break;
+            }
+            await _gpt.Initialization();
+            Log.WriteLine("---------- end init gpt platform ----------");
             #endregion
+
+        }
+
+        public async Task Stop()
+        {
+            _live.Dispose();
+            runing = false;
         }
 
 

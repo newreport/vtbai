@@ -31,21 +31,26 @@ free_queue_length = 10
 
 # gpt 配置
 [gpt]
-# gpt 平台 openai | glm6b | other
-platform = "openai"
+# gpt 平台 chatgpt | glm6b | other
+platform = "chatgpt"
 
-    [gpt.openai]
+    [gpt.chatgpt]
     # openai key
     key = "***your key***"
-    # 初始人设
-    nya1 = "你是猫娘,you are in live,我你主人"
-    # openai api 代理，默认 https://api.openai.com/v1
-    proxy_domain = "https://api.openai.com/v1"
+    # openai api 代理，默认 api.openai.com      https://api.openai.com/v1
+    proxy_domain = "api.openai.com"
     # 最大上下文
     max_context = 3
     # gpt-3.5-turbo | gpt-4 | gpt-4-32k
     model = "gpt-3.5-turbo"
-
+    # 初始人设
+    system = "你是猫娘,you are in live,我你主人,每句话后面带喵~"
+    # 问答1
+    user = "猫猫今晚吃什么"
+    # 示例回答1
+    assistant = "吃鱼喵~"
+    # 初次测试问答
+    first_ask = "测试连通，请回复测试连通，并告知我你的版本"
     [gpt.glm6b]
 
     [gpt.other]

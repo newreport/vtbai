@@ -30,12 +30,12 @@ namespace Live
             #region 初始化消息队列
 
             //最优先队列
-            TopQue = new();
-            if (_liveConf.ApiQueueLength > 0) ApiQue = new(_liveConf.ApiQueueLength);
-            else ApiQue = new();
-            if (_liveConf.PayQueueLength > 0) PayQue = new(_liveConf.PayQueueLength);
-            else PayQue = new();
-            FreeQue = new(_liveConf.FreeQueueLength);
+            topQue = new();
+            if (_liveConf.apiQueueLength > 0) apiQue = new(_liveConf.apiQueueLength);
+            else apiQue = new();
+            if (_liveConf.payQueueLength > 0) payQue = new(_liveConf.payQueueLength);
+            else payQue = new();
+            freeQue = new(_liveConf.freeQueueLength);
             #endregion
         }
 
@@ -47,33 +47,33 @@ namespace Live
         /// <returns></returns>
         public LiveModel? GetLatestQueue()
         {
-            if (TopQue.Count > 0) return TopQue.Dequeue();
-            if (ApiQue.Count > 0) return ApiQue.Dequeue();
-            //if (PayQue.Count > 0) return PayQue.Dequeue();
+            if (topQue.Count > 0) return topQue.Dequeue();
+            if (apiQue.Count > 0) return apiQue.Dequeue();
+            //if (payQue.Count > 0) return payQue.Dequeue();
             return null;
         }
 
-        public Queue<LiveModel> TopQue;
+        protected Queue<LiveModel> topQue;
         /// <summary>
         /// API 队列
         /// </summary>
-        public Queue<LiveModel> ApiQue;
+        protected Queue<LiveModel> apiQue;
         /// <summary>
         /// 付费队列
         /// </summary>
-        public PriorityQueue<int, LiveModel> PayQue;
+        protected PriorityQueue<int, LiveModel> payQue;
         /// <summary>
         /// 免费队列
         /// </summary>
-        public PriorityQueue<int, LiveModel> FreeQue;
+        protected PriorityQueue<int, LiveModel> freeQue;
         /// <summary>
         /// 清理满载队列
         /// </summary>
         protected void CleanFullQueue()
         {
-            if (FreeQue.Count >= _liveConf.FreeQueueLength) FreeQue.Dequeue();
-            if (_liveConf.PayQueueLength != -1 && PayQue.Count >= _liveConf.PayQueueLength) PayQue.Dequeue();
-            if (_liveConf.ApiQueueLength != -1 && ApiQue.Count >= _liveConf.ApiQueueLength) ApiQue.Dequeue();
+            if (freeQue.Count >= _liveConf.freeQueueLength) freeQue.Dequeue();
+            if (_liveConf.payQueueLength != -1 && payQue.Count >= _liveConf.payQueueLength) payQue.Dequeue();
+            if (_liveConf.apiQueueLength != -1 && apiQue.Count >= _liveConf.apiQueueLength) apiQue.Dequeue();
         }
 
         public class LiveModel
@@ -140,10 +140,10 @@ namespace Live
 
             public string Platform { get; set; }
 
-            public int ApiQueueLength { get; set; }
-            public int PayQueueLength { get; set; }
+            public int apiQueueLength { get; set; }
+            public int payQueueLength { get; set; }
             public decimal PayThreshold { get; set; }
-            public int FreeQueueLength { get; set; }
+            public int freeQueueLength { get; set; }
 
             public class BiliConf
             {

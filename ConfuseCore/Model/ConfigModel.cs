@@ -45,7 +45,7 @@ namespace ConfuseCore.Model
 
         public Live.Live.LiveConf Live { get; set; }
 
-        public GptConf Gpt { get; set; }
+        public GPT.GPT.GptConf Gpt { get; set; }
 
         public TtsConf Tts { get; set; }
 
@@ -54,41 +54,7 @@ namespace ConfuseCore.Model
         public AigcConf Aigc { get; set; }
 
 
-        public class GptConf
-        {
-            public string platform { get; set; }
 
-            public OpenaiConf Openai { get; set; }
-
-            public Glm6bConf Glm6b { get; set; }
-
-            public OtherConf Other { get; set; }
-            public class OpenaiConf
-            {
-                public string key { get; set; }
-
-                public string Nya1 { get; set; }
-
-                public string ProxyDomain { get; set; }
-
-                public int MaxContext { get; set; }
-
-                public string Model { get; set; }
-            }
-
-            public class Glm6bConf
-            {
-
-            }
-
-            public class OtherConf
-            {
-                public string TransmitUrl { get; set; }
-
-                [DataMember(Name = "q_name")]
-                public string QName { get; set; }
-            }
-        }
 
         public class TtsConf
         {

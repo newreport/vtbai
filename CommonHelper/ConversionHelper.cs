@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -45,16 +46,20 @@ namespace CommonHelper
             }
             return ByteOut;
         }
+
         public static int GetInt(byte[] buffer)
         {
-            var temp = buffer.Reverse().ToList();
-            int sum = temp[0];
-            for (int i = 1; i < temp.Count; i++)
+            buffer = buffer.Reverse().ToArray();
+            int sum = buffer[0];
+
+            for (int i = 1; i < buffer.Length; i++)
             {
-                sum += temp[i] * (int)Math.Pow(16, i * 2);
+                if (buffer[i] > 0) sum += buffer[i] << (i * 8); //sum += buffer[i] * (int)Math.Pow(16, i * 2);
             }
             return sum;
         }
+
+
 
         public static byte[] GetBytes(int value)
         {

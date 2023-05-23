@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Buffers.Text;
 
-namespace Live
+namespace Live.Module
 {
     public class Bili : Live, ILive
     {
@@ -44,7 +44,17 @@ namespace Live
             #endregion
 
             #region 连接ws服务器
-            await _ws.ConnectAsync(connect.WsUrl, connect.Cancellation);
+            try
+            {
+                await _ws.ConnectAsync(connect.WsUrl, connect.Cancellation);
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Initialization连接ws服务器错误", ex.Message);
+                Reconnection();
+                return;
+            }
             var packetModel = new { uid = 0, roomid = connect.Roomid, protover = 3, platform = "vtbai", type = 2, key = connect.Token, };
             var playload = JsonConvert.SerializeObject(packetModel);
             await SendSocketDataAsync(7, playload, "发送认证包");
@@ -58,14 +68,16 @@ namespace Live
             _ = ReceiveMessageLoop();//接收广播
         }
 
-        void IDisposable.Dispose()
+        async void IDisposable.Dispose()
         {
-            _ws?.Dispose();
             running = false;
+            _ws?.Dispose();
+            Log.WriteLine("释放哔哩哔哩");
             GC.SuppressFinalize(this);
         }
         #endregion
 
+        #region 入队
         /// <summary>
         /// 入队
         /// </summary>
@@ -80,18 +92,23 @@ namespace Live
                     if (_isDev) Log.WriteLine("系统广播");
                     break;
                 case "INTERACT_WORD":
-                    if (_isDev) Log.WriteLine("进入房间");
+                    if (_isDev) Log.WriteLine("进入直播间");
                     break;
                 case "ONLINE_RANK_COUNT":
                     if (_isDev) Log.WriteLine("高能榜数量更新");
                     break;
                 case "WATCHED_CHANGE":
-                    if (_isDev) Log.WriteLine("看过");
+                    if (_isDev) Log.WriteLine("多少人看过");
                     break;
                 case "STOP_LIVE_ROOM_LIST":
                     if (_isDev) Log.WriteLine("停止的直播间列表");
                     break;
+                case "ENTRY_EFFECT":
+                    Log.WriteLine("舰长进入直播间");
+                    break;
                 case "DANMU_MSG":
+                    Log.WriteLine("cmd", cmd);
+                    Log.WriteLine("data", obj.ToString());
                     break;
                 case "GUARD_BUY"://舰长
                 case "USER_TOAST_MSG"://续费舰长
@@ -108,13 +125,16 @@ namespace Live
             }
         }
 
+        #endregion
+
         #region 发送消息/心跳 & 接收消息
 
         /// <summary>
         /// 重连
         /// </summary>
-        private void ReConnection()
+        private void Reconnection()
         {
+            Log.WriteLine("进入重启");
             if (running)
             {
                 Log.WriteLine("重连bili服务器");
@@ -210,7 +230,10 @@ namespace Live
             }
             catch (Exception ex)
             {
-                Log.Error("bili接收消息错误", ex.Message);
+                if (running == true)
+                {
+                    Log.Error("bili接收消息错误", ex.Message);
+                }
                 //接收时不需要重连，发送时重连
                 //ReConnection();
             }
@@ -233,7 +256,7 @@ namespace Live
             catch (Exception e)
             {
                 Log.Error("心跳错误", $"{e}");
-                ReConnection();
+                Reconnection();
             }
             // 发送ping包
             async Task SendHeartbeatAsync() => await SendSocketDataAsync(2, " ", "bili发送心跳包");
