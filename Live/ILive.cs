@@ -7,7 +7,7 @@ namespace Live
     {
         protected void InQueue(JObject obj);
 
-        public LiveModel? GetLatestQueue();
+        public LiveModel GetLatestQueue();
 
         Task Initialization();
 

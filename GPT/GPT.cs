@@ -13,9 +13,9 @@ namespace GPT
 
         protected bool running = false;
 
-        protected bool _isDev;
+        protected readonly bool _isDev;
 
-        protected GptConf _gptConf;
+        protected readonly GptConf _gptConf;
 
         public GPT(GptConf gptConf, bool isDev)
         {
@@ -24,7 +24,10 @@ namespace GPT
             _gptConf = gptConf;
         }
 
-        protected Queue<(string, string)> qaQueue = new();
+        /// <summary>
+        /// 以调用方时间作为排序记录
+        /// </summary>
+        protected PriorityQueue<(string, string), DateTime> qaQueue = new();
 
         public (string, string)? GetLatestQueue()
         {

@@ -68,7 +68,7 @@ namespace Live.Module
             _ = ReceiveMessageLoop();//接收广播
         }
 
-        async void IDisposable.Dispose()
+        void IDisposable.Dispose()
         {
             running = false;
             _ws?.Dispose();
@@ -104,7 +104,7 @@ namespace Live.Module
                     if (_isDev) Log.WriteLine("停止的直播间列表");
                     break;
                 case "ENTRY_EFFECT":
-                    Log.WriteLine("舰长进入直播间");
+                    if (_isDev) Log.WriteLine("舰长进入直播间");
                     break;
                 case "DANMU_MSG":
                     Log.WriteLine("cmd", cmd);

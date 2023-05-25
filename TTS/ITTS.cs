@@ -1,18 +1,18 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GPT
+namespace TTS
 {
-    public interface IGPT : IDisposable
+    public interface ITTS : IDisposable
     {
 
         public void InQueue(string quesition);
 
-        public (string, string)? GetLatestQueue();
+        public string GetLatestQueue();
+
         Task Initialization();
     }
 }

@@ -51,7 +51,6 @@ namespace CommonHelper
         {
             buffer = buffer.Reverse().ToArray();
             int sum = buffer[0];
-
             for (int i = 1; i < buffer.Length; i++)
             {
                 if (buffer[i] > 0) sum += buffer[i] << (i * 8); //sum += buffer[i] * (int)Math.Pow(16, i * 2);
@@ -61,21 +60,13 @@ namespace CommonHelper
 
 
 
-        public static byte[] GetBytes(int value)
-        {
-            return new byte[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value };
-        }
-        public static byte[] GetBytes(long value)
-        {
-            return new byte[] {
+        public static byte[] GetBytes(int value) => new byte[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value };
+        public static byte[] GetBytes(long value) =>
+            new byte[] {
                 (byte)(value >> 56), (byte)(value >> 48), (byte)(value >> 40), (byte)(value >> 32),
                 (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value
             };
-        }
-        public static byte[] GetBytes(short value)
-        {
-            return new byte[] { (byte)(value >> 8), (byte)value };
-        }
+        public static byte[] GetBytes(short value) => new byte[] { (byte)(value >> 8), (byte)value };
         #endregion
 
         #region 解压压缩

@@ -1,21 +1,30 @@
+> 该分支正在编写中，实际不可用
+
 # python 版本 
 若 C# 版本（Docker）不稳定或者不能使用，请使用下面版本，并阅读 Source 中的 Readme
 https://github.com/newreport/vtbai/releases/tag/1.1-py
 
+# C#
+```bash
+git clone https://github.com/newreport/vtbai.git
+git checkout -b master origin/master
+```
+clone 下来切换到master分支，安装 [dotnet 7](https://dotnet.microsoft.com/zh-cn/download) 和 [vs](https://visualstudio.microsoft.com/zh-hans/vs/) 进行调试启动
 
-# Docker 版本
+# Docker(未启用)
 > [vits演示模型](https://huggingface.co/newreport/live_tts_default_model/tree/main) 商用请自炼自然人同意的合法声源或用 Azure
  
 > [敏感词](https://snginx.newreport.top/my_sensitive_words.7z)  解压密码：kkDXCD6mwaU7wU
 ```bash
 docker run -d --restart=always --name vtbai -p 3939:3939 -v vtbai-data:/data newreport/vtbai
 ```
+
 | 功能                                  | 地址                                                 |
 | ------------------------------------- | ---------------------------------------------------- |
 | swagger 后端 api 列表                 | http://127.0.0.1:3939/swagger                        |
 | obs弹幕(api 方式，固定 0.1s 刷新一次) | http://127.0.0.1:3939/static/subtitle_api.html       |
-| obs弹幕(websocket 方式，实时)                    | http://127.0.0.1:3939/static/subtitle_websocket.html |
-|后台管理，配置toml和模型（暂未实现）|http://127.0.0.1:3939/admin|
+| obs弹幕(websocket 方式，实时)         | http://127.0.0.1:3939/static/subtitle_websocket.html |
+| 后台管理，配置toml和模型（暂未实现）  | http://127.0.0.1:3939/admin                          |
 
 # 架构
 blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 文本转语音）——>vts（语音转口型，快捷键触发表情）——>obs(推流)
@@ -77,7 +86,8 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 - [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) b 站 api 文档
 - [BiliBiliLive](https://github.com/a820715049/BiliBiliLive) b 站 websocket 实现
 - [MoeGoe](https://github.com/CjangCjengh/MoeGoe.git) vits chinese
-- [OpenAI-API-dotnet](https://github.com/OkGoDoIt/OpenAI-API-dotnet)
+- [OpenAI-DotNet](https://github.com/RageAgainstThePixel/OpenAI-DotNet) openai 封装库
+- [douyin-live](https://github.com/YunzhiYike/douyin-live/blob/main/dy.py) 抖音协议参考
 
 ## python版
 - [vits](https://github.com/jaywalnut310/vits) vits source
@@ -151,7 +161,7 @@ blivedm（抓直播间信息）——>openai（猫娘对话）——>vits（tts 
 | **USER_TOAST_MSG**            | 续费舰长         |
 | **SUPER_CHAT_MESSAGE**        | 超级留言         |
 | **SUPER_CHAT_MESSAGE_JPN**    | 超级留言-JP      |
-| **SEND_GIFT**                     | 赠送礼物         |
+| **SEND_GIFT**                 | 赠送礼物         |
 | COMBO_SEND                    | 赠送礼物         |
 | ROOM_REAL_TIME_MESSAGE_UPDATE | 主播粉丝信息更新 |
 | ENTRY_EFFECT                  | 进入特效         |

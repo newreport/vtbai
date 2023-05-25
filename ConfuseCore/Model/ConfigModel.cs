@@ -12,9 +12,6 @@ namespace ConfuseCore.Model
 
         private const string SensitivePath = "data/config/sensitive_words.txt";
 
-        public static List<string> SensitiveWords { get; private set; }
-        public static List<string> SensitiveWordsPY { get; private set; }
-
 
         public string Env { get; set; }
 
@@ -31,11 +28,11 @@ namespace ConfuseCore.Model
             #endregion
 
             #region SensitiveWords敏感词
-            SensitiveWords = FileHelper.ReadAllLines(SensitivePath).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
-            SensitiveWordsPY = new List<string>();
-            foreach (var s in SensitiveWords)
+            GModel.SensitiveWords = FileHelper.ReadAllLines(SensitivePath).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+            GModel.SensitiveWordsPY = new List<string>();
+            foreach (var s in GModel.SensitiveWords)
             {
-                SensitiveWordsPY.Add(PinyinHelper.Hanzi2Pinyin(s));
+                GModel.SensitiveWordsPY.Add(PinyinHelper.Hanzi2Pinyin(s));
             }
             #endregion
 
@@ -47,53 +44,20 @@ namespace ConfuseCore.Model
 
         public GPT.GPT.GptConf Gpt { get; set; }
 
-        public TtsConf Tts { get; set; }
+        public TTS.TTS.TtsConf Tts { get; set; }
 
-        public L2ddConf L2d { get; set; }
+        public L2dConf L2d { get; set; }
 
         public AigcConf Aigc { get; set; }
 
 
 
 
-        public class TtsConf
-        {
-
-            public string Platform { get; set; }
-
-            public string TextIntervalMs { get; set; }
-
-            public int MaxTextLength { get; set; }
-
-            public int MaxTtsLength { get; set; }
-
-            public int MaxWavQueue { get; set; }
-            public bool AutoDelWav { get; set; }
-
-            public MoegoeConf Moegoe { get; set; }
-
-            public class MoegoeConf
-            {
-                public string ModelOnnx { get; set; }
-
-                public string ModelConfig { get; set; }
-
-                public string ModelPth { get; set; }
-
-                public int SpeakerId { get; set; }
-
-                public decimal LengthScale { get; set; }
-
-                public decimal NoiseScale { get; set; }
-
-                public decimal NoiseScaleW { get; set; }
-            }
-        }
-
-        public class L2ddConf
+        public class L2dConf
         {
             public string Platform { get; set; }
         }
+
 
         public class AigcConf
         {

@@ -12,9 +12,9 @@ namespace Live
     {
         protected bool running = false;
 
-        protected bool _isDev;
+        protected readonly bool _isDev;
 
-        protected LiveConf _liveConf;
+        protected readonly LiveConf _liveConf;
 
         /// <summary>
         /// 构造函数
@@ -31,11 +31,11 @@ namespace Live
 
             //最优先队列
             topQue = new();
-            if (_liveConf.apiQueueLength > 0) apiQue = new(_liveConf.apiQueueLength);
+            if (_liveConf.ApiQueueLength > 0) apiQue = new(_liveConf.ApiQueueLength);
             else apiQue = new();
-            if (_liveConf.payQueueLength > 0) payQue = new(_liveConf.payQueueLength);
+            if (_liveConf.PayQueueLength > 0) payQue = new(_liveConf.PayQueueLength);
             else payQue = new();
-            freeQue = new(_liveConf.freeQueueLength);
+            freeQue = new(_liveConf.FreeQueueLength);
             #endregion
         }
 
@@ -45,13 +45,16 @@ namespace Live
         /// 出队
         /// </summary>
         /// <returns></returns>
-        public LiveModel? GetLatestQueue()
+        public LiveModel GetLatestQueue()
         {
             if (topQue.Count > 0) return topQue.Dequeue();
-            if (apiQue.Count > 0) return apiQue.Dequeue();
-            //if (payQue.Count > 0) return payQue.Dequeue();
+            if (apiQue.Count > 0) { return apiQue.Dequeue(); }
+            if (payQue.Count > 0) { return payQue.Dequeue(); }
+            if (freeQue.Count > 0) { return freeQue.Dequeue(); }
             return null;
         }
+
+
 
         protected Queue<LiveModel> topQue;
         /// <summary>
@@ -61,19 +64,19 @@ namespace Live
         /// <summary>
         /// 付费队列
         /// </summary>
-        protected PriorityQueue<int, LiveModel> payQue;
+        protected PriorityQueue<LiveModel, int> payQue;
         /// <summary>
         /// 免费队列
         /// </summary>
-        protected PriorityQueue<int, LiveModel> freeQue;
+        protected PriorityQueue<LiveModel, int> freeQue;
         /// <summary>
         /// 清理满载队列
         /// </summary>
         protected void CleanFullQueue()
         {
-            if (freeQue.Count >= _liveConf.freeQueueLength) freeQue.Dequeue();
-            if (_liveConf.payQueueLength != -1 && payQue.Count >= _liveConf.payQueueLength) payQue.Dequeue();
-            if (_liveConf.apiQueueLength != -1 && apiQue.Count >= _liveConf.apiQueueLength) apiQue.Dequeue();
+            if (freeQue.Count >= _liveConf.FreeQueueLength) freeQue.Dequeue();
+            if (_liveConf.PayQueueLength != -1 && payQue.Count >= _liveConf.PayQueueLength) payQue.Dequeue();
+            if (_liveConf.ApiQueueLength != -1 && apiQue.Count >= _liveConf.ApiQueueLength) apiQue.Dequeue();
         }
 
         public class LiveModel
@@ -94,18 +97,23 @@ namespace Live
             /// 付费金额 付费/免费队列
             /// </summary>
             public decimal PayMoney { get; set; }
-            /// <summary>
-            /// 权重
-            /// </summary>
-            public int Weigth { get; set; }
+
             /// <summary>
             /// 动作
             /// </summary>
             public string Action { get; set; }
             /// <summary>
-            /// 礼物名称 舰长/提督/总督
+            /// 礼物名称 
             /// </summary>
             public string GiftName { get; set; }
+            /// <summary>
+            /// 舰长类型
+            /// </summary>
+            public string GuardType { get; set; }
+            /// <summary>
+            /// 消息类型
+            /// </summary>
+            public string Message { get; set; }
         }
 
         public enum LiveMessageType
@@ -127,7 +135,6 @@ namespace Live
             /// 弹幕
             /// </summary>
             Danmu,
-
         }
         #endregion
 
@@ -140,10 +147,10 @@ namespace Live
 
             public string Platform { get; set; }
 
-            public int apiQueueLength { get; set; }
-            public int payQueueLength { get; set; }
+            public int ApiQueueLength { get; set; }
+            public int PayQueueLength { get; set; }
             public decimal PayThreshold { get; set; }
-            public int freeQueueLength { get; set; }
+            public int FreeQueueLength { get; set; }
 
             public class BiliConf
             {

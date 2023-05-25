@@ -38,7 +38,7 @@ platform = "chatgpt"
     # openai key
     key = "***your key***"
     # openai api 代理，默认 api.openai.com      https://api.openai.com/v1
-    proxy_domain = "api.openai.com"
+    proxy_domain = ""
     # 最大上下文
     max_context = 3
     # gpt-3.5-turbo | gpt-4 | gpt-4-32k
@@ -74,6 +74,7 @@ max_tts_length = 200
 max_wav_queue = 5
 # 是否在播放完后自动删除生成的 wav 文件  true| false
 auto_del_wav = false
+
 
     [tts.moegoe]
     # infernce_type = cpu

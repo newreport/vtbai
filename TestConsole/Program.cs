@@ -11,6 +11,9 @@ using TestConsole.data.性能测试;
 
 Core core = new Core();
 await core.Start();
+
+
+
 //await Task.Delay(10000);
 //await core.Stop();
 

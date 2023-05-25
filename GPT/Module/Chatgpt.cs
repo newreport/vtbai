@@ -30,9 +30,12 @@ namespace GPT.Module
         {
             baseMessages.Clear();
             //https://github.com/RageAgainstThePixel/OpenAI-DotNet#openai-api-proxy
-            var settings = new OpenAIClientSettings(domain: _gptConf.Chatgpt.ProxyDomain);
-            _api = new OpenAIClient(_gptConf.Chatgpt.key, settings);
-
+            _api = new OpenAIClient(_gptConf.Chatgpt.key);
+            if (!string.IsNullOrWhiteSpace(_gptConf.Chatgpt.ProxyDomain))
+            {
+                var settings = new OpenAIClientSettings(domain: _gptConf.Chatgpt.ProxyDomain);
+                _api = new OpenAIClient(_gptConf.Chatgpt.key, settings);
+            }
             var models = await _api.ModelsEndpoint.GetModelsAsync();
             Log.WriteLine("chatgpt可用model列表", string.Join(",", models));
             baseMessages.Add(new Message(Role.System, _gptConf.Chatgpt.System));
@@ -41,24 +44,26 @@ namespace GPT.Module
 
             var fistMessages = new List<Message>();
             fistMessages.AddRange(baseMessages);
+            fistMessages.Add(new Message(Role.User, _gptConf.Chatgpt.User));
 
             var chatRequest = new ChatRequest(fistMessages);
             var result = await _api.ChatEndpoint.GetCompletionAsync(chatRequest);
             Log.WriteLine("初始回复", $"{result.FirstChoice.Message.Role}: {result.FirstChoice.Message.Content}");
         }
 
-
-        public void InQueue(string qes)
+        public  void InQueue(string qes)
         {
-            if (contentMessages.Count > _gptConf.Chatgpt.MaxContext) contentMessages.RemoveAt(0);
-            contentMessages.Add(new Message(Role.User, _gptConf.Chatgpt.User));
+            DateTime dateTime = DateTime.Now;
+            Task.Run(() =>
+            {
+                if (contentMessages.Count > _gptConf.Chatgpt.MaxContext) contentMessages.RemoveAt(0);
+                contentMessages.Add(new Message(Role.User, _gptConf.Chatgpt.User));
 
-            var chatRequest = new ChatRequest(sendMessgaes);
-            var result = _api.ChatEndpoint.GetCompletionAsync(chatRequest).Result;
-            qaQueue.Enqueue((qes, result.FirstChoice.Message.Content));
+                var chatRequest = new ChatRequest(sendMessgaes);
+                var result = _api.ChatEndpoint.GetCompletionAsync(chatRequest).Result;
+                qaQueue.Enqueue((qes, result.FirstChoice.Message.Content), dateTime);
+            });
         }
-
-
 
         public void Dispose()
         {
